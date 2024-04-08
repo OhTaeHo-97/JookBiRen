@@ -22,7 +22,7 @@ public class AnswerRepository {
     }
 
     public Optional<AnswerEp01> findByQuiz(int placeCode, int quizNumber) {
-        AnswerEp01 answer = queryFactory
+        AnswerEp01 result = queryFactory
                 .select(answerEp01)
                 .from(answerEp01)
                 .join(answerEp01.quizEp01, quizEp01)
@@ -32,6 +32,21 @@ public class AnswerRepository {
                 )
                 .fetchOne();
 
-        return Optional.ofNullable(answer);
+        return Optional.ofNullable(result);
+    }
+
+    public Optional<AnswerEp01> findByQuizAndAnswer(int placeCode, int quizNumber, String answer) {
+        AnswerEp01 result = queryFactory
+                .select(answerEp01)
+                .from(answerEp01)
+                .join(answerEp01.quizEp01, quizEp01)
+                .where(
+                        quizEp01.placeCode.eq(placeCode),
+                        quizEp01.quizNumber.eq(quizNumber),
+                        answerEp01.answer.eq(answer)
+                )
+                .fetchOne();
+
+        return Optional.ofNullable(result);
     }
 }
