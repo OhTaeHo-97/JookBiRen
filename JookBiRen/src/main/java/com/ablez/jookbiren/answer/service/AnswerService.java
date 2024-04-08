@@ -1,6 +1,8 @@
 package com.ablez.jookbiren.answer.service;
 
 import com.ablez.jookbiren.answer.dto.AnswerDto;
+import com.ablez.jookbiren.answer.dto.AnswerDto.CheckAnswerDto;
+import com.ablez.jookbiren.answer.dto.AnswerDto.CheckAnswerResponseDto;
 import com.ablez.jookbiren.answer.dto.AnswerDto.FindAnswerDto;
 import com.ablez.jookbiren.answer.dto.AnswerDto.FindAnswerResponseDto;
 import com.ablez.jookbiren.answer.entity.AnswerEp01;
@@ -22,5 +24,12 @@ public class AnswerService {
                 quizInfo.getQuizNumber());
         AnswerEp01 answer = optionalAnswer.orElseThrow(() -> new NoSuchElementException("해당 문제가 존재하지 않습니다."));
         return new FindAnswerResponseDto(answer.getAnswer());
+    }
+
+    public CheckAnswerResponseDto checkAnswer(CheckAnswerDto answerInfo) {
+        Optional<AnswerEp01> optionalAnswer = answerRepository.findByQuizAndAnswer(
+                answerInfo.getQuizInfo().getPlaceCode(),
+                answerInfo.getQuizInfo().getQuizNumber(), answerInfo.getAnswer());
+        return new CheckAnswerResponseDto(optionalAnswer.isPresent());
     }
 }
