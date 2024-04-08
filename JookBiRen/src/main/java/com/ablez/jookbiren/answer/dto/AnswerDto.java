@@ -23,4 +23,24 @@ public class AnswerDto {
             this.answer = answer;
         }
     }
+
+    @Getter
+    public static class CheckAnswerDto {
+        private FindAnswerDto quizInfo;
+        private String answer;
+
+        public CheckAnswerDto(String quiz, String answer) {
+            this.quizInfo = new FindAnswerDto(quiz);
+            this.answer = answer;
+        }
+    }
+
+    @Getter
+    public static class CheckAnswerResponseDto {
+        private boolean isCorrect;
+
+        public CheckAnswerResponseDto(boolean isCorrect) {
+            this.isCorrect = isCorrect;
+        }
+    }
 }
