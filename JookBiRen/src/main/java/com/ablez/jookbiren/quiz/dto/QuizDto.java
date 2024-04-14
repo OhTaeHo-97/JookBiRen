@@ -16,4 +16,17 @@ public class QuizDto {
             this.solvedProblems = solvedProblems;
         }
     }
+
+    @Getter
+    public static class QuizPageDto {
+        private String answer;
+
+        public QuizPageDto() {
+            answer = "";
+        }
+
+        public QuizPageDto(String answer) {
+            this.answer = answer;
+        }
+    }
 }
