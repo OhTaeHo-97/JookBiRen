@@ -27,4 +27,7 @@ public class Quiz3Ep01 {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEp01 userId;
+    @ManyToOne
+    @JoinColumn(name = "quiz_id")
+    private QuizEp01 quiz;
 }

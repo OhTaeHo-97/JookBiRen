@@ -18,7 +18,6 @@ public class Quiz1Ep01 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long quiz1Id;
-    private Integer quizNumber;
     private LocalDateTime firstAccessTime;
     private LocalDateTime firstAnswerTime;
     private LocalDateTime getHintTime;
@@ -27,4 +26,7 @@ public class Quiz1Ep01 {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEp01 userId;
+    @ManyToOne
+    @JoinColumn(name = "quiz_id")
+    private QuizEp01 quiz;
 }

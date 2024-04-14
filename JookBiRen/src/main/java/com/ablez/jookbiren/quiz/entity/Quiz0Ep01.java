@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,6 @@ public class Quiz0Ep01 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long quiz0Id;
-    private Integer quizNumber;
     private LocalDateTime firstAccessTime;
     private LocalDateTime firstAnswerTie;
     private LocalDateTime getHintTime;
@@ -27,4 +27,7 @@ public class Quiz0Ep01 {
     @OneToOne
     @JoinColumn(name = "user_id")
     private UserEp01 userId;
+    @ManyToOne
+    @JoinColumn(name = "quiz_id")
+    private QuizEp01 quiz;
 }
