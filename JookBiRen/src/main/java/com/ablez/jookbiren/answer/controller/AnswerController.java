@@ -1,8 +1,8 @@
 package com.ablez.jookbiren.answer.controller;
 
 import com.ablez.jookbiren.answer.dto.AnswerDto.CheckAnswerDto;
-import com.ablez.jookbiren.answer.dto.AnswerDto.FindAnswerDto;
 import com.ablez.jookbiren.answer.service.AnswerService;
+import com.ablez.jookbiren.dto.JookBiRenDto.Quiz;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class AnswerController {
 
     @GetMapping
     public ResponseEntity findAnswer(String quiz) {
-        return new ResponseEntity<>(answerService.findAnswer(new FindAnswerDto(quiz)), HttpStatus.OK);
+        return new ResponseEntity<>(answerService.findAnswer(new Quiz(quiz)), HttpStatus.OK);
     }
 
     @PostMapping("/quiz")
