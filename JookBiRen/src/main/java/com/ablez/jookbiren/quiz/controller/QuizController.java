@@ -1,5 +1,6 @@
 package com.ablez.jookbiren.quiz.controller;
 
+import com.ablez.jookbiren.dto.JookBiRenDto.Quiz;
 import com.ablez.jookbiren.quiz.service.QuizService;
 import com.ablez.jookbiren.user.entity.UserEp01;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,12 @@ public class QuizController {
     @GetMapping
     public ResponseEntity getCurrentSituationAndSolvedProblems() {
         return new ResponseEntity(quizService.getCurrentSituationAndSolvedProblems(new UserEp01(1L, "abc")),
+                HttpStatus.OK);
+    }
+
+    @GetMapping("/answer")
+    public ResponseEntity checkAlreadySolvedQuiz(String quiz) {
+        return new ResponseEntity(quizService.checkAlreadySolvedQuiz(new UserEp01(1L, "abc"), new Quiz(quiz)),
                 HttpStatus.OK);
     }
 }
