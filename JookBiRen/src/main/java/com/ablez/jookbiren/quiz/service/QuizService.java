@@ -3,8 +3,10 @@ package com.ablez.jookbiren.quiz.service;
 import com.ablez.jookbiren.answer.dto.AnswerDto.FindAnswerResponseDto;
 import com.ablez.jookbiren.answer.service.AnswerService;
 import com.ablez.jookbiren.dto.JookBiRenDto.Quiz;
+import com.ablez.jookbiren.quiz.dto.QuizDto.HintDto;
 import com.ablez.jookbiren.quiz.dto.QuizDto.PageDto;
 import com.ablez.jookbiren.quiz.dto.QuizDto.QuizPageDto;
+import com.ablez.jookbiren.quiz.entity.HintEp01;
 import com.ablez.jookbiren.quiz.entity.Quiz0Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz1Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz2Ep01;
@@ -32,6 +34,10 @@ public class QuizService {
         List<Quiz0Ep01> solvedQuizzes = quizRepository.findAllQuiz0(user);
 
         return new PageDto(user.getSolvedQuizCount(), user.getAnswerCount(), quizzesToQuizNumbers(solvedQuizzes));
+    }
+
+    private List<Integer> quizzesToQuizNumbers(List<Quiz0Ep01> quizzes) {
+        return quizzes.stream().map(quiz -> quiz.getQuiz().getQuizNumber()).collect(Collectors.toList());
     }
 
     public QuizPageDto checkAlreadySolvedQuiz(UserEp01 user, Quiz quizInfo) {
@@ -96,7 +102,15 @@ public class QuizService {
         }
     }
 
-    private List<Integer> quizzesToQuizNumbers(List<Quiz0Ep01> quizzes) {
-        return quizzes.stream().map(quiz -> quiz.getQuiz().getQuizNumber()).collect(Collectors.toList());
+    public HintDto findHint(UserEp01 user, Quiz quizInfo) {
+        QuizPageDto checkAlreadySolvedQuiz = checkAlreadySolvedQuiz(user, quizInfo);
+        if (!checkAlreadySolvedQuiz.getAnswer().isEmpty()) {
+            throw new RuntimeException();
+        } else {
+            Optional<HintEp01> optionalHint = quizRepository.findHintByQuiz(quizInfo.getPlaceCode(),
+                    quizInfo.getQuizNumber());
+            HintEp01 hint = optionalHint.orElseThrow(() -> new RuntimeException());
+            return new HintDto(hint.getHint());
+        }
     }
 }
