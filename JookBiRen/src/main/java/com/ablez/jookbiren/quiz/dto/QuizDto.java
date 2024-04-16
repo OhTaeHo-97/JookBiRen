@@ -29,4 +29,13 @@ public class QuizDto {
             this.answer = answer;
         }
     }
+
+    @Getter
+    public static class HintDto {
+        private String hint;
+
+        public HintDto(String hint) {
+            this.hint = hint;
+        }
+    }
 }
