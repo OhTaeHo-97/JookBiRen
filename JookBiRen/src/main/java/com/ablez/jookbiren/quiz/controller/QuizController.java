@@ -27,4 +27,9 @@ public class QuizController {
         return new ResponseEntity(quizService.checkAlreadySolvedQuiz(new UserEp01(1L, "abc"), new Quiz(quiz)),
                 HttpStatus.OK);
     }
+
+    @GetMapping("/hint")
+    public ResponseEntity getHint(String quiz) {
+        return new ResponseEntity(quizService.findHint(new UserEp01(1L, "abc"), new Quiz(quiz)), HttpStatus.OK);
+    }
 }
