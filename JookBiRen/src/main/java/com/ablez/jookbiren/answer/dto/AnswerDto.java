@@ -32,4 +32,22 @@ public class AnswerDto {
             this.isCorrect = isCorrect;
         }
     }
+
+    @Getter
+    public static class SuspectDto {
+        private int suspect;
+    }
+
+    @Getter
+    public static class SuspectResponseDto {
+        private String criminal;
+
+        public SuspectResponseDto() {
+            criminal = "";
+        }
+
+        public SuspectResponseDto(String criminal) {
+            this.criminal = criminal;
+        }
+    }
 }
