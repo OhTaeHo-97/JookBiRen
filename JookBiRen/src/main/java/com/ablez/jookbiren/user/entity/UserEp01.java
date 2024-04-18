@@ -30,4 +30,8 @@ public class UserEp01 {
         this.userId = userId;
         this.code = code;
     }
+
+    public void updateCriminal(int criminal) {
+        this.criminal = criminal;
+    }
 }
