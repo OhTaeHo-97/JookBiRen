@@ -7,7 +7,7 @@ import static com.ablez.jookbiren.quiz.entity.QQuiz2Ep01.quiz2Ep01;
 import static com.ablez.jookbiren.quiz.entity.QQuiz3Ep01.quiz3Ep01;
 import static com.ablez.jookbiren.quiz.entity.QQuizEp01.quizEp01;
 
-import com.ablez.jookbiren.quiz.entity.HintEp01;
+import com.ablez.jookbiren.hint.entity.HintEp01;
 import com.ablez.jookbiren.quiz.entity.Quiz0Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz1Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz2Ep01;
