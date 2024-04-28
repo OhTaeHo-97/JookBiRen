@@ -30,11 +30,8 @@ public class JwtParseInterceptor implements HandlerInterceptor {
         String method = request.getMethod();
         String uri = request.getRequestURI();
 
-        if (method.equals("POST") && (uri.equals("/users") || uri.equals("/users/login") || uri.equals(
-                "/users/find-id"))) {
-            return true;
-        }
-        if (method.equals("PATCH") && uri.equals("/users/new-password")) {
+        if (method.equals("POST") && (uri.equals("/v1/users") || uri.equals("/v1/users/login") || uri.equals(
+                "/v1/users/reissue"))) {
             return true;
         }
 

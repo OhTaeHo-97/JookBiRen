@@ -25,6 +25,6 @@ public class WrongAnswerEp01 {
     @JoinColumn(name = "user_id")
     private UserEp01 user;
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "quiz_id")
     private QuizEp01 quiz;
 }

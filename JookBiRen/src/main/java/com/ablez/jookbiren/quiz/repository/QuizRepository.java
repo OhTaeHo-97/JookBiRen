@@ -1,6 +1,6 @@
 package com.ablez.jookbiren.quiz.repository;
 
-import static com.ablez.jookbiren.quiz.entity.QHintEp01.hintEp01;
+import static com.ablez.jookbiren.hint.entity.QHintEp01.hintEp01;
 import static com.ablez.jookbiren.quiz.entity.QQuiz0Ep01.quiz0Ep01;
 import static com.ablez.jookbiren.quiz.entity.QQuiz1Ep01.quiz1Ep01;
 import static com.ablez.jookbiren.quiz.entity.QQuiz2Ep01.quiz2Ep01;

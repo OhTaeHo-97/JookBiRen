@@ -9,4 +9,15 @@ public class UserDto {
         @NotNull
         private String code;
     }
+
+    @Getter
+    public static class InfoDto {
+        private int score;
+        private long playtime;
+
+        public InfoDto(int score, long playtime) {
+            this.score = score;
+            this.playtime = playtime;
+        }
+    }
 }
