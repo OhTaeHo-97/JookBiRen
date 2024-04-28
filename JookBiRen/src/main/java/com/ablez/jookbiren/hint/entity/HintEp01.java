@@ -1,5 +1,6 @@
-package com.ablez.jookbiren.quiz.entity;
+package com.ablez.jookbiren.hint.entity;
 
+import com.ablez.jookbiren.quiz.entity.QuizEp01;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
