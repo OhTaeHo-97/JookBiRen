@@ -3,6 +3,7 @@ package com.ablez.jookbiren.security.userdetails;
 import com.ablez.jookbiren.user.entity.UserEp01;
 import com.ablez.jookbiren.user.repository.UserRepository;
 import java.util.NoSuchElementException;
+import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CustomUserDetailService implements UserDetailsService {
     private final UserRepository userRepository;
