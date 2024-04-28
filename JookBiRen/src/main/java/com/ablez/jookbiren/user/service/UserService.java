@@ -6,6 +6,7 @@ import static com.ablez.jookbiren.security.utils.JwtExpirationEnums.REFRESH_TOKE
 import com.ablez.jookbiren.security.jwt.JwtTokenizer;
 import com.ablez.jookbiren.security.redis.repository.RefreshTokenRepository;
 import com.ablez.jookbiren.security.redis.token.RefreshToken;
+import com.ablez.jookbiren.security.utils.JwtHeaderUtilEnums;
 import com.ablez.jookbiren.user.dto.UserDto.CodeDto;
 import com.ablez.jookbiren.user.entity.UserEp01;
 import com.ablez.jookbiren.user.repository.UserRepository;
@@ -32,6 +33,19 @@ public class UserService {
         return new TokenDto(accessToken, refreshToken.getRefreshToken());
     }
 
+    public TokenDto reissue(String refreshToken) {
+        refreshToken = validateToken(refreshToken);
+        String username = jwtTokenizer.getUsername(refreshToken);
+        RefreshToken existedRefreshToken = refreshTokenRepository.findById(username)
+                .orElseThrow(() -> new NoSuchElementException("잘못된 리프레시 토큰"));
+
+        if (refreshToken.equals(existedRefreshToken.getRefreshToken())) {
+            return reissueToken(username);
+        }
+
+        throw new IllegalArgumentException();
+    }
+
     private RefreshToken saveRefreshToken(String username) {
         return refreshTokenRepository.save(RefreshToken.of(
                 username,
@@ -42,5 +56,16 @@ public class UserService {
 
     private UserEp01 findByCode(String code) {
         return userRepository.findByCode(code).orElseThrow(() -> new NoSuchElementException("잘못된 코드"));
+    }
+
+    private String validateToken(String token) {
+        if (!token.startsWith(JwtHeaderUtilEnums.GRANT_TYPE.getValue())) {
+            throw new IllegalArgumentException("토큰 타입 잘못됨");
+        }
+        return token.substring(7);
+    }
+
+    private TokenDto reissueToken(String username) {
+        return new TokenDto(jwtTokenizer.generateAccessToken(username), saveRefreshToken(username).getRefreshToken());
     }
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,6 +26,16 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid UserDto.CodeDto codeInfo, HttpServletResponse response) {
         TokenDto token = userService.login(codeInfo);
+        response.setHeader("Authorization",
+                JwtHeaderUtilEnums.GRANT_TYPE.getValue() + token.getAccessToken().getAccessToken());
+        response.setHeader("Refresh",
+                JwtHeaderUtilEnums.GRANT_TYPE.getValue() + token.getRefreshToken().getRefreshToken());
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity reissue(@RequestHeader("Refresh") String refreshToken, HttpServletResponse response) {
+        TokenDto token = userService.reissue(refreshToken);
         response.setHeader("Authorization",
                 JwtHeaderUtilEnums.GRANT_TYPE.getValue() + token.getAccessToken().getAccessToken());
         response.setHeader("Refresh",
