@@ -1,11 +1,18 @@
 package com.ablez.jookbiren.user.entity;
 
+import com.ablez.jookbiren.security.entity.Authority;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,6 +33,9 @@ public class UserEp01 {
     private LocalDateTime answerTime;
     private LocalDateTime firstLoginTime;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Authority> authorities = new HashSet<>();
+
     public UserEp01(Long userId, String code) {
         this.userId = userId;
         this.code = code;
@@ -33,5 +43,13 @@ public class UserEp01 {
 
     public void updateCriminal(int criminal) {
         this.criminal = criminal;
+    }
+
+    public List<String> getRoles() {
+        return authorities.stream().map(Authority::getRole).collect(Collectors.toList());
+    }
+
+    public void addRole(Authority authority) {
+        this.authorities.add(authority);
     }
 }
