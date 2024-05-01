@@ -30,7 +30,8 @@ public class UserService {
 
     public TokenDto login(CodeDto codeInfo) {
         UserEp01 user = findByCode(codeInfo.getCode());
-
+        user.updateFirstLoginTime();
+        
         String code = user.getCode();
         String accessToken = jwtTokenizer.generateAccessToken(code);
         RefreshToken refreshToken = saveRefreshToken(code);
@@ -69,7 +70,7 @@ public class UserService {
         ));
     }
 
-    private UserEp01 findByCode(String code) {
+    public UserEp01 findByCode(String code) {
         return userRepository.findByCode(code).orElseThrow(() -> new NoSuchElementException("잘못된 코드"));
     }
 

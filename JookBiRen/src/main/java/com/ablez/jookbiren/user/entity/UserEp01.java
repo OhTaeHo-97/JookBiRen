@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
@@ -32,11 +33,16 @@ public class UserEp01 {
     private Long userId;
     @Column(nullable = false)
     private String code;
+    @Setter
     private Integer score = 0;
+    @Setter
     private Integer answerStatusCode = 0;
+    @Setter
     private Integer answerCount = 0;
     private Integer solvedQuizCount = 0;
+    @Setter
     private Integer criminal = 0;
+    @Setter
     private LocalDateTime answerTime;
     private LocalDateTime firstLoginTime;
 
@@ -65,6 +71,12 @@ public class UserEp01 {
 
     public void updateCriminal(int criminal) {
         this.criminal = criminal;
+    }
+
+    public void updateFirstLoginTime() {
+        if (this.firstLoginTime == null) {
+            firstLoginTime = LocalDateTime.now();
+        }
     }
 
     public List<String> getRoles() {
