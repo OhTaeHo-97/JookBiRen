@@ -9,7 +9,9 @@ import com.ablez.jookbiren.security.redis.repository.RefreshTokenRepository;
 import com.ablez.jookbiren.security.redis.token.RefreshToken;
 import com.ablez.jookbiren.security.utils.JwtHeaderUtilEnums;
 import com.ablez.jookbiren.user.dto.UserDto.CodeDto;
+import com.ablez.jookbiren.user.dto.UserDto.EndingDto;
 import com.ablez.jookbiren.user.dto.UserDto.InfoDto;
+import com.ablez.jookbiren.user.dto.UserDto.LoginDto;
 import com.ablez.jookbiren.user.entity.UserEp01;
 import com.ablez.jookbiren.user.repository.UserRepository;
 import java.time.Duration;
@@ -28,15 +30,16 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtParseInterceptor jwtParseInterceptor;
 
-    public TokenDto login(CodeDto codeInfo) {
+    public LoginDto login(CodeDto codeInfo) {
         UserEp01 user = findByCode(codeInfo.getCode());
         user.updateFirstLoginTime();
-        
+
         String code = user.getCode();
         String accessToken = jwtTokenizer.generateAccessToken(code);
         RefreshToken refreshToken = saveRefreshToken(code);
 
-        return new TokenDto(accessToken, refreshToken.getRefreshToken());
+        return new LoginDto(new TokenDto(accessToken, refreshToken.getRefreshToken()),
+                new EndingDto(user.getAnswerTime() != null));
     }
 
     public TokenDto reissue(String refreshToken) {
@@ -55,6 +58,7 @@ public class UserService {
     public InfoDto getInfo() {
         String code = jwtParseInterceptor.getAuthenticatedUsername();
         UserEp01 user = findByCode(code);
+        
         LocalDateTime firstLoginTime = user.getFirstLoginTime();
         LocalDateTime answerTime = user.getAnswerTime();
         Duration duration = Duration.between(answerTime, firstLoginTime);

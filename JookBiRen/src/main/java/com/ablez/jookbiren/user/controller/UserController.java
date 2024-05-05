@@ -1,8 +1,10 @@
 package com.ablez.jookbiren.user.controller;
 
+import static com.ablez.jookbiren.user.dto.UserDto.CodeDto;
+
 import com.ablez.jookbiren.security.jwt.JwtDto.TokenDto;
 import com.ablez.jookbiren.security.utils.JwtHeaderUtilEnums;
-import com.ablez.jookbiren.user.dto.UserDto;
+import com.ablez.jookbiren.user.dto.UserDto.LoginDto;
 import com.ablez.jookbiren.user.service.UserService;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -25,13 +27,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid UserDto.CodeDto codeInfo, HttpServletResponse response) {
-        TokenDto token = userService.login(codeInfo);
+    public ResponseEntity login(@RequestBody @Valid CodeDto codeInfo, HttpServletResponse response) {
+        LoginDto loginInfo = userService.login(codeInfo);
         response.setHeader("Authorization",
-                JwtHeaderUtilEnums.GRANT_TYPE.getValue() + token.getAccessToken().getAccessToken());
+                JwtHeaderUtilEnums.GRANT_TYPE.getValue() + loginInfo.getToken().getAccessToken().getAccessToken());
         response.setHeader("Refresh",
-                JwtHeaderUtilEnums.GRANT_TYPE.getValue() + token.getRefreshToken().getRefreshToken());
-        return new ResponseEntity(HttpStatus.OK);
+                JwtHeaderUtilEnums.GRANT_TYPE.getValue() + loginInfo.getToken().getRefreshToken().getRefreshToken());
+        return new ResponseEntity(loginInfo.getEnding(), HttpStatus.OK);
     }
 
     @PostMapping("/reissue")
