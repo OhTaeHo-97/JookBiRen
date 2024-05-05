@@ -1,13 +1,11 @@
 package com.ablez.jookbiren.quiz.repository;
 
-import static com.ablez.jookbiren.hint.entity.QHintEp01.hintEp01;
 import static com.ablez.jookbiren.quiz.entity.QQuiz0Ep01.quiz0Ep01;
 import static com.ablez.jookbiren.quiz.entity.QQuiz1Ep01.quiz1Ep01;
 import static com.ablez.jookbiren.quiz.entity.QQuiz2Ep01.quiz2Ep01;
 import static com.ablez.jookbiren.quiz.entity.QQuiz3Ep01.quiz3Ep01;
 import static com.ablez.jookbiren.quiz.entity.QQuizEp01.quizEp01;
 
-import com.ablez.jookbiren.hint.entity.HintEp01;
 import com.ablez.jookbiren.quiz.entity.Quiz0Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz1Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz2Ep01;
@@ -170,19 +168,5 @@ public class QuizRepository {
                 .fetchOne();
 
         return Optional.ofNullable(quiz);
-    }
-
-    public Optional<HintEp01> findHintByQuiz(int placeCode, int quizNumber) {
-        HintEp01 hint = queryFactory
-                .selectFrom(hintEp01)
-                .join(hintEp01.quiz, quizEp01)
-                .where(
-                        quizEp01.placeCode.eq(placeCode),
-                        quizEp01.quizNumber.eq(quizNumber)
-                )
-                .distinct()
-                .fetchOne();
-
-        return Optional.ofNullable(hint);
     }
 }

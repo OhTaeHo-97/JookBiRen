@@ -3,7 +3,6 @@ package com.ablez.jookbiren.quiz.service;
 import com.ablez.jookbiren.answer.dto.AnswerDto.FindAnswerResponseDto;
 import com.ablez.jookbiren.answer.service.AnswerService;
 import com.ablez.jookbiren.dto.JookBiRenDto.Quiz;
-import com.ablez.jookbiren.hint.entity.HintEp01;
 import com.ablez.jookbiren.quiz.dto.QuizDto.HintDto;
 import com.ablez.jookbiren.quiz.dto.QuizDto.PageDto;
 import com.ablez.jookbiren.quiz.dto.QuizDto.QuizPageDto;
@@ -17,8 +16,8 @@ import com.ablez.jookbiren.quiz.repository.Quiz2Repository;
 import com.ablez.jookbiren.quiz.repository.Quiz3Repository;
 import com.ablez.jookbiren.quiz.repository.QuizRepository;
 import com.ablez.jookbiren.user.entity.UserEp01;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -167,13 +166,38 @@ public class QuizService {
 
     public HintDto findHint(UserEp01 user, Quiz quizInfo) {
         QuizPageDto checkAlreadySolvedQuiz = checkAlreadySolvedQuiz(user, quizInfo);
-        if (!checkAlreadySolvedQuiz.getAnswer().isEmpty()) {
-            throw new RuntimeException();
-        } else {
-            Optional<HintEp01> optionalHint = quizRepository.findHintByQuiz(quizInfo.getPlaceCode(),
-                    quizInfo.getQuizNumber());
-            HintEp01 hint = optionalHint.orElseThrow(() -> new RuntimeException());
-            return new HintDto(hint.getHint());
+
+        if (checkAlreadySolvedQuiz.getAnswer().isEmpty()) {
+            if (quizInfo.getPlaceCode() == 0) {
+                Quiz0Ep01 quiz0Ep01 = quizRepository.findByQuizNumberAndUser0(quizInfo.getQuizNumber(), user)
+                        .orElseThrow();
+                quiz0Ep01.setGetHintTime(LocalDateTime.now());
+            } else if (quizInfo.getPlaceCode() == 1) {
+                Quiz1Ep01 quiz1Ep01 = quizRepository.findByQuizNumberAndUser1(quizInfo.getQuizNumber(), user)
+                        .orElseThrow();
+                quiz1Ep01.setGetHintTime(LocalDateTime.now());
+            } else if (quizInfo.getPlaceCode() == 2) {
+                Quiz2Ep01 quiz2Ep01 = quizRepository.findByQuizNumberAndUser2(quizInfo.getQuizNumber(), user)
+                        .orElseThrow();
+                quiz2Ep01.setGetHintTime(LocalDateTime.now());
+            } else if (quizInfo.getPlaceCode() == 3) {
+                Quiz3Ep01 quiz3Ep01 = quizRepository.findByQuizNumberAndUser3(quizInfo.getQuizNumber(), user)
+                        .orElseThrow();
+                quiz3Ep01.setGetHintTime(LocalDateTime.now());
+            }
         }
+
+        return new HintDto(checkAlreadySolvedQuiz.getAnswer().isEmpty());
+
+//        if (!checkAlreadySolvedQuiz.getAnswer().isEmpty()) {
+//            return new HintDto(false);
+////            throw new RuntimeException();
+//        } else {
+////            Optional<HintEp01> optionalHint = quizRepository.findHintByQuiz(quizInfo.getPlaceCode(),
+////                    quizInfo.getQuizNumber());
+////            HintEp01 hint = optionalHint.orElseThrow(() -> new RuntimeException());
+////            return new HintDto(hint.getHint());
+//            return new HintDto(true);
+//        }
     }
 }
