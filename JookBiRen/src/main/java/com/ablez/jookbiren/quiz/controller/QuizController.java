@@ -2,7 +2,8 @@ package com.ablez.jookbiren.quiz.controller;
 
 import com.ablez.jookbiren.dto.JookBiRenDto.Quiz;
 import com.ablez.jookbiren.quiz.service.QuizService;
-import com.ablez.jookbiren.user.entity.UserEp01;
+import com.ablez.jookbiren.security.interceptor.JwtParseInterceptor;
+import com.ablez.jookbiren.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,21 +16,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/quizzes")
 public class QuizController {
     private final QuizService quizService;
+    private final UserService userService;
 
     @GetMapping
-    public ResponseEntity getCurrentSituationAndSolvedProblems() {
-        return new ResponseEntity(quizService.getCurrentSituationAndSolvedProblems(new UserEp01(1L, "abc")),
-                HttpStatus.OK);
+    public ResponseEntity getCurrentSituationAndSolvedProblems(int place) {
+        return new ResponseEntity(quizService.getCurrentSituationAndSolvedProblems(place,
+                userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername())), HttpStatus.OK);
     }
 
     @GetMapping("/answer")
     public ResponseEntity checkAlreadySolvedQuiz(String quiz) {
-        return new ResponseEntity(quizService.checkAlreadySolvedQuiz(new UserEp01(1L, "abc"), new Quiz(quiz)),
-                HttpStatus.OK);
+        return new ResponseEntity(quizService.checkAlreadySolvedQuiz(
+                userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername()), new Quiz(quiz)), HttpStatus.OK);
     }
 
     @GetMapping("/hint")
     public ResponseEntity getHint(String quiz) {
-        return new ResponseEntity(quizService.findHint(new UserEp01(1L, "abc"), new Quiz(quiz)), HttpStatus.OK);
+        return new ResponseEntity(
+                quizService.findHint(userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername()),
+                        new Quiz(quiz)), HttpStatus.OK);
     }
 }

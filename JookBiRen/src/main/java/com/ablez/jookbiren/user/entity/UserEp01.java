@@ -50,6 +50,7 @@ public class UserEp01 {
     private Set<Authority> authorities = new HashSet<>();
 
     @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Setter
     private Quiz0Ep01 quiz0s;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -85,5 +86,17 @@ public class UserEp01 {
 
     public void addRole(Authority authority) {
         this.authorities.add(authority);
+    }
+
+    public void addQuiz1(Quiz1Ep01 quiz1Ep01) {
+        this.quiz1s.add(quiz1Ep01);
+    }
+
+    public void addQuiz2(Quiz2Ep01 quiz2Ep01) {
+        this.quiz2s.add(quiz2Ep01);
+    }
+
+    public void addQuiz3(Quiz3Ep01 quiz3Ep01) {
+        this.quiz3s.add(quiz3Ep01);
     }
 }

@@ -12,6 +12,7 @@ import com.ablez.jookbiren.quiz.entity.Quiz0Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz1Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz2Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz3Ep01;
+import com.ablez.jookbiren.quiz.entity.QuizEp01;
 import com.ablez.jookbiren.user.entity.UserEp01;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -31,10 +32,32 @@ public class QuizRepository {
         this.queryFactory = new JPAQueryFactory(this.em);
     }
 
+    public Optional<QuizEp01> findQuiz(int placeCode, int quizNumber) {
+        QuizEp01 quiz = queryFactory
+                .selectFrom(quizEp01)
+                .where(
+                        quizEp01.placeCode.eq(placeCode),
+                        quizEp01.quizNumber.eq(quizNumber)
+                )
+                .fetchOne();
+
+        return Optional.ofNullable(quiz);
+    }
+
     public List<Quiz0Ep01> findAllQuiz0(UserEp01 user) {
         return queryFactory
                 .selectFrom(quiz0Ep01)
                 .where(quiz0Ep01.userId.eq(user))
+                .fetch();
+    }
+
+    public List<Quiz0Ep01> findAllQuiz0IsAnswer(UserEp01 user) {
+        return queryFactory
+                .selectFrom(quiz0Ep01)
+                .where(
+                        quiz0Ep01.userId.eq(user),
+                        quiz0Ep01.firstAnswerTime.isNotNull()
+                )
                 .fetch();
     }
 
@@ -45,6 +68,16 @@ public class QuizRepository {
                 .fetch();
     }
 
+    public List<Quiz1Ep01> findAllQuiz1IsAnswer(UserEp01 user) {
+        return queryFactory
+                .selectFrom(quiz1Ep01)
+                .where(
+                        quiz1Ep01.userId.eq(user),
+                        quiz1Ep01.firstAnswerTime.isNotNull()
+                )
+                .fetch();
+    }
+
     public List<Quiz2Ep01> findAllQuiz2(UserEp01 user) {
         return queryFactory
                 .selectFrom(quiz2Ep01)
@@ -52,10 +85,30 @@ public class QuizRepository {
                 .fetch();
     }
 
+    public List<Quiz2Ep01> findAllQuiz2IsAnswer(UserEp01 user) {
+        return queryFactory
+                .selectFrom(quiz2Ep01)
+                .where(
+                        quiz2Ep01.userId.eq(user),
+                        quiz2Ep01.firstAnswerTime.isNotNull()
+                )
+                .fetch();
+    }
+
     public List<Quiz3Ep01> findAllQuiz3(UserEp01 user) {
         return queryFactory
                 .selectFrom(quiz3Ep01)
                 .where(quiz3Ep01.userId.eq(user))
+                .fetch();
+    }
+
+    public List<Quiz3Ep01> findAllQuiz3IsAnswer(UserEp01 user) {
+        return queryFactory
+                .selectFrom(quiz3Ep01)
+                .where(
+                        quiz3Ep01.userId.eq(user),
+                        quiz3Ep01.firstAnswerTime.isNotNull()
+                )
                 .fetch();
     }
 
@@ -68,6 +121,7 @@ public class QuizRepository {
                         quizEp01.quizNumber.eq(quizNumber),
                         quiz0Ep01.userId.eq(user)
                 )
+                .distinct()
                 .fetchOne();
 
         return Optional.ofNullable(quiz);
@@ -82,6 +136,7 @@ public class QuizRepository {
                         quizEp01.quizNumber.eq(quizNumber),
                         quiz1Ep01.userId.eq(user)
                 )
+                .distinct()
                 .fetchOne();
 
         return Optional.ofNullable(quiz);
@@ -96,6 +151,7 @@ public class QuizRepository {
                         quizEp01.quizNumber.eq(quizNumber),
                         quiz2Ep01.userId.eq(user)
                 )
+                .distinct()
                 .fetchOne();
 
         return Optional.ofNullable(quiz);
@@ -110,6 +166,7 @@ public class QuizRepository {
                         quizEp01.quizNumber.eq(quizNumber),
                         quiz3Ep01.userId.eq(user)
                 )
+                .distinct()
                 .fetchOne();
 
         return Optional.ofNullable(quiz);
@@ -123,6 +180,7 @@ public class QuizRepository {
                         quizEp01.placeCode.eq(placeCode),
                         quizEp01.quizNumber.eq(quizNumber)
                 )
+                .distinct()
                 .fetchOne();
 
         return Optional.ofNullable(hint);
