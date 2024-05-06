@@ -22,7 +22,7 @@ public class AnswerController {
 
     @GetMapping
     public ResponseEntity findAnswer(String quiz) {
-        return new ResponseEntity<>(answerService.findAnswer(new Quiz(quiz)), HttpStatus.OK);
+        return new ResponseEntity<>(answerService.findAnswer(new Quiz(quiz), new UserEp01(1L, "abc")), HttpStatus.OK);
     }
 
     @GetMapping("/quiz")
