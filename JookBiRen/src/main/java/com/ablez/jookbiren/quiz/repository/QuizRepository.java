@@ -4,12 +4,14 @@ import static com.ablez.jookbiren.quiz.entity.QQuiz0Ep01.quiz0Ep01;
 import static com.ablez.jookbiren.quiz.entity.QQuiz1Ep01.quiz1Ep01;
 import static com.ablez.jookbiren.quiz.entity.QQuiz2Ep01.quiz2Ep01;
 import static com.ablez.jookbiren.quiz.entity.QQuiz3Ep01.quiz3Ep01;
+import static com.ablez.jookbiren.quiz.entity.QQuiz4Ep01.quiz4Ep01;
 import static com.ablez.jookbiren.quiz.entity.QQuizEp01.quizEp01;
 
 import com.ablez.jookbiren.quiz.entity.Quiz0Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz1Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz2Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz3Ep01;
+import com.ablez.jookbiren.quiz.entity.Quiz4Ep01;
 import com.ablez.jookbiren.quiz.entity.QuizEp01;
 import com.ablez.jookbiren.user.entity.UserEp01;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -163,6 +165,21 @@ public class QuizRepository {
                         quizEp01.placeCode.eq(3),
                         quizEp01.quizNumber.eq(quizNumber),
                         quiz3Ep01.userId.eq(user)
+                )
+                .distinct()
+                .fetchOne();
+
+        return Optional.ofNullable(quiz);
+    }
+
+    public Optional<Quiz4Ep01> findByQuizNumberAndUser4(int quizNumber, UserEp01 user) {
+        Quiz4Ep01 quiz = queryFactory
+                .selectFrom(quiz4Ep01)
+                .join(quiz4Ep01.quiz, quizEp01)
+                .where(
+                        quizEp01.placeCode.eq(3),
+                        quizEp01.quizNumber.eq(quizNumber),
+                        quiz4Ep01.userId.eq(user)
                 )
                 .distinct()
                 .fetchOne();

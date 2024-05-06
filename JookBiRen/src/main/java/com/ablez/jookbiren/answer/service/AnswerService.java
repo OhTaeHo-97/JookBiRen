@@ -13,6 +13,7 @@ import com.ablez.jookbiren.quiz.entity.Quiz0Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz1Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz2Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz3Ep01;
+import com.ablez.jookbiren.quiz.entity.Quiz4Ep01;
 import com.ablez.jookbiren.quiz.entity.QuizEp01;
 import com.ablez.jookbiren.quiz.entity.WrongAnswerEp01;
 import com.ablez.jookbiren.quiz.repository.QuizRepository;
@@ -61,7 +62,7 @@ public class AnswerService {
             quiz.setGetAnswerTime(LocalDateTime.now());
             user.setAnswerCount(user.getAnswerCount() + 1);
         } else if (quizInfo.getPlaceCode() == 4) {
-            Quiz3Ep01 quiz = quizInfoService.findByQuizNumberAndUser3(quizInfo.getQuizNumber(), user).orElseThrow();
+            Quiz4Ep01 quiz = quizInfoService.findByQuizNumberAndUser4(quizInfo.getQuizNumber(), user).orElseThrow();
             quiz.setGetAnswerTime(LocalDateTime.now());
             user.setAnswerCount(user.getAnswerCount() + 1);
         }
@@ -75,6 +76,9 @@ public class AnswerService {
                 answerInfo.getQuizInfo().getQuizNumber(), answerInfo.getAnswer());
         if (optionalAnswer.isPresent()) {
             setAnswerTime(answerInfo, user);
+            if (answerInfo.getQuizInfo().getPlaceCode() == 4) {
+                user.setAnswerTime(LocalDateTime.now());
+            }
             return new CheckAnswerResponseDto(true);
         } else {
             QuizEp01 quiz = quizRepository.findQuiz(answerInfo.getQuizInfo().getPlaceCode(),
@@ -99,6 +103,10 @@ public class AnswerService {
             quiz.setFirstAnswerTime(LocalDateTime.now());
         } else if (answerInfo.getQuizInfo().getPlaceCode() == 3) {
             Quiz3Ep01 quiz = quizInfoService.findByQuizNumberAndUser3(answerInfo.getQuizInfo().getQuizNumber(), user)
+                    .orElseThrow();
+            quiz.setFirstAnswerTime(LocalDateTime.now());
+        } else if (answerInfo.getQuizInfo().getPlaceCode() == 4) {
+            Quiz4Ep01 quiz = quizInfoService.findByQuizNumberAndUser4(answerInfo.getQuizInfo().getQuizNumber(), user)
                     .orElseThrow();
             quiz.setFirstAnswerTime(LocalDateTime.now());
         }

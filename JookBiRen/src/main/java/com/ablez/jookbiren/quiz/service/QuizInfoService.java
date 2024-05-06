@@ -4,6 +4,7 @@ import com.ablez.jookbiren.quiz.entity.Quiz0Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz1Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz2Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz3Ep01;
+import com.ablez.jookbiren.quiz.entity.Quiz4Ep01;
 import com.ablez.jookbiren.quiz.repository.Quiz0Repository;
 import com.ablez.jookbiren.quiz.repository.Quiz1Repository;
 import com.ablez.jookbiren.quiz.repository.Quiz2Repository;
@@ -76,6 +77,10 @@ public class QuizInfoService {
 
     public Optional<Quiz3Ep01> findByQuizNumberAndUser3(int quizNumber, UserEp01 user) {
         return quizRepository.findByQuizNumberAndUser3(quizNumber, user);
+    }
+
+    public Optional<Quiz4Ep01> findByQuizNumberAndUser4(int quizNumber, UserEp01 user) {
+        return quizRepository.findByQuizNumberAndUser4(quizNumber, user);
     }
 
 //    private QuizPageDto findAnswerOfSsamzigil(UserEp01 user, Quiz quizInfo) {
