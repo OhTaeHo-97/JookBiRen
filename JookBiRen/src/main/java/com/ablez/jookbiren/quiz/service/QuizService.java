@@ -33,6 +33,7 @@ public class QuizService {
     private final Quiz2Repository quiz2Repository;
     private final Quiz3Repository quiz3Repository;
     private final AnswerService answerService;
+    private final QuizInfoService quizInfoService;
 
     public PageDto getCurrentSituationAndSolvedProblems(int placeCode, UserEp01 user) {
         if (placeCode == 0) {
@@ -55,28 +56,32 @@ public class QuizService {
     }
 
     private PageDto getCurrentSituationAndSsamzigilSolvedProblems(UserEp01 user) {
-        List<Quiz3Ep01> solvedQuizzes = quizRepository.findAllQuiz3IsAnswer(user);
+        List<Quiz3Ep01> solvedQuizzes = quizInfoService.getSsamzigilSolvedQuizzes(user);
+//        List<Quiz3Ep01> solvedQuizzes = quizRepository.findAllQuiz3IsAnswer(user);
         List<Integer> quizNumbers = solvedQuizzes.stream().map(quiz -> quiz.getQuiz().getQuizNumber())
                 .collect(Collectors.toList());
         return new PageDto(user.getSolvedQuizCount(), user.getAnswerCount(), quizNumbers);
     }
 
     private PageDto getCurrentSituationAndBukchonSolvedProblems(UserEp01 user) {
-        List<Quiz2Ep01> solvedQuizzes = quizRepository.findAllQuiz2IsAnswer(user);
+        List<Quiz2Ep01> solvedQuizzes = quizInfoService.getBukchonSolvedQuizzes(user);
+//        List<Quiz2Ep01> solvedQuizzes = quizRepository.findAllQuiz2IsAnswer(user);
         List<Integer> quizNumbers = solvedQuizzes.stream().map(quiz -> quiz.getQuiz().getQuizNumber())
                 .collect(Collectors.toList());
         return new PageDto(user.getSolvedQuizCount(), user.getAnswerCount(), quizNumbers);
     }
 
     private PageDto getCurrentSituationAndChangdeokgungSolvedProblems(UserEp01 user) {
-        List<Quiz1Ep01> solvedQuizzes = quizRepository.findAllQuiz1IsAnswer(user);
+        List<Quiz1Ep01> solvedQuizzes = quizInfoService.getChangdeokgungSolvedQuizzes(user);
+//        List<Quiz1Ep01> solvedQuizzes = quizRepository.findAllQuiz1IsAnswer(user);
         List<Integer> quizNumbers = solvedQuizzes.stream().map(quiz -> quiz.getQuiz().getQuizNumber())
                 .collect(Collectors.toList());
         return new PageDto(user.getSolvedQuizCount(), user.getAnswerCount(), quizNumbers);
     }
 
     private PageDto getCurrentSituationAndAngukSolvedProblems(UserEp01 user) {
-        List<Quiz0Ep01> solvedQuizzes = quizRepository.findAllQuiz0IsAnswer(user);
+        List<Quiz0Ep01> solvedQuizzes = quizInfoService.getAngukSolvedQuizzes(user);
+//        List<Quiz0Ep01> solvedQuizzes = quizRepository.findAllQuiz0IsAnswer(user);
         List<Integer> quizNumbers = solvedQuizzes.stream().map(quiz -> quiz.getQuiz().getQuizNumber())
                 .collect(Collectors.toList());
         return new PageDto(user.getSolvedQuizCount(), user.getAnswerCount(), quizNumbers);
@@ -101,10 +106,12 @@ public class QuizService {
     }
 
     private QuizPageDto findAnswerOfSsamzigil(UserEp01 user, Quiz quizInfo) {
-        Quiz3Ep01 quiz = quizRepository.findByQuizNumberAndUser3(quizInfo.getQuizNumber(), user).orElse(null);
+        Quiz3Ep01 quiz = quizInfoService.findByQuizNumberAndUser3(quizInfo.getQuizNumber(), user).orElse(null);
+//        Quiz3Ep01 quiz = quizRepository.findByQuizNumberAndUser3(quizInfo.getQuizNumber(), user).orElse(null);
         if (quiz == null) {
-            Quiz3Ep01 newQuiz = quiz3Repository.save(new Quiz3Ep01(quizInfo.getQuizNumber(), user,
-                    quizRepository.findQuiz(3, quizInfo.getQuizNumber()).orElseThrow()));
+            Quiz3Ep01 newQuiz = quizInfoService.insertQuiz3(quizInfo.getQuizNumber(), user);
+//            Quiz3Ep01 newQuiz = quiz3Repository.save(new Quiz3Ep01(quizInfo.getQuizNumber(), user,
+//                    quizRepository.findQuiz(3, quizInfo.getQuizNumber()).orElseThrow()));
             user.addQuiz3(newQuiz);
             return new QuizPageDto();
         } else if (quiz.getFirstAnswerTime() == null) {
@@ -117,10 +124,12 @@ public class QuizService {
     }
 
     private QuizPageDto findAnswerOfBukchon(UserEp01 user, Quiz quizInfo) {
-        Quiz2Ep01 quiz = quizRepository.findByQuizNumberAndUser2(quizInfo.getQuizNumber(), user).orElse(null);
+        Quiz2Ep01 quiz = quizInfoService.findByQuizNumberAndUser2(quizInfo.getQuizNumber(), user).orElse(null);
+//        Quiz2Ep01 quiz = quizRepository.findByQuizNumberAndUser2(quizInfo.getQuizNumber(), user).orElse(null);
         if (quiz == null) {
-            Quiz2Ep01 newQuiz = quiz2Repository.save(new Quiz2Ep01(quizInfo.getQuizNumber(), user,
-                    quizRepository.findQuiz(2, quizInfo.getQuizNumber()).orElseThrow()));
+            Quiz2Ep01 newQuiz = quizInfoService.insertQuiz2(quiz.getQuizNumber(), user);
+//            Quiz2Ep01 newQuiz = quiz2Repository.save(new Quiz2Ep01(quizInfo.getQuizNumber(), user,
+//                    quizRepository.findQuiz(2, quizInfo.getQuizNumber()).orElseThrow()));
             user.addQuiz2(newQuiz);
             return new QuizPageDto();
         } else if (quiz.getFirstAccessTime() == null) {
@@ -133,10 +142,12 @@ public class QuizService {
     }
 
     private QuizPageDto findAnswerOfChangdeokgung(UserEp01 user, Quiz quizInfo) {
-        Quiz1Ep01 quiz = quizRepository.findByQuizNumberAndUser1(quizInfo.getQuizNumber(), user).orElse(null);
+        Quiz1Ep01 quiz = quizInfoService.findByQuizNumberAndUser1(quizInfo.getQuizNumber(), user).orElse(null);
+//        Quiz1Ep01 quiz = quizRepository.findByQuizNumberAndUser1(quizInfo.getQuizNumber(), user).orElse(null);
         if (quiz == null) {
-            Quiz1Ep01 newQuiz = quiz1Repository.save(new Quiz1Ep01(quizInfo.getQuizNumber(), user,
-                    quizRepository.findQuiz(1, quizInfo.getQuizNumber()).orElseThrow()));
+            Quiz1Ep01 newQuiz = quizInfoService.insertQuiz1(quizInfo.getQuizNumber(), user);
+//            Quiz1Ep01 newQuiz = quiz1Repository.save(new Quiz1Ep01(quizInfo.getQuizNumber(), user,
+//                    quizRepository.findQuiz(1, quizInfo.getQuizNumber()).orElseThrow()));
             user.addQuiz1(newQuiz);
             return new QuizPageDto();
         } else if (quiz.getFirstAnswerTime() == null) {
@@ -149,10 +160,12 @@ public class QuizService {
     }
 
     private QuizPageDto findAnswerOfAngukStation(UserEp01 user, Quiz quizInfo) {
-        Quiz0Ep01 quiz = quizRepository.findByQuizNumberAndUser0(quizInfo.getQuizNumber(), user).orElse(null);
+        Quiz0Ep01 quiz = quizInfoService.findByQuizNumberAndUser0(quizInfo.getQuizNumber(), user).orElse(null);
+//        Quiz0Ep01 quiz = quizRepository.findByQuizNumberAndUser0(quizInfo.getQuizNumber(), user).orElse(null);
         if (quiz == null) {
-            Quiz0Ep01 newQuiz = quiz0Repository.save(new Quiz0Ep01(quizInfo.getQuizNumber(), user,
-                    quizRepository.findQuiz(0, quizInfo.getQuizNumber()).orElseThrow()));
+            Quiz0Ep01 newQuiz = quizInfoService.insertQuiz0(quizInfo.getQuizNumber(), user);
+//            Quiz0Ep01 newQuiz = quiz0Repository.save(new Quiz0Ep01(quizInfo.getQuizNumber(), user,
+//                    quizRepository.findQuiz(0, quizInfo.getQuizNumber()).orElseThrow()));
             user.setQuiz0s(newQuiz);
             return new QuizPageDto();
         } else if (quiz.getFirstAnswerTime() == null) {
