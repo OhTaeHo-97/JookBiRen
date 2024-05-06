@@ -35,10 +35,16 @@ public class UserDto {
     public static class InfoDto {
         private int score;
         private long playtime;
+        private int answerCount;
+        private int solvedCount;
+        private String criminal;
 
-        public InfoDto(int score, long playtime) {
+        public InfoDto(int score, long playtime, int answerCount, int solvedCount, String criminal) {
             this.score = score;
             this.playtime = playtime;
+            this.answerCount = answerCount;
+            this.solvedCount = solvedCount;
+            this.criminal = criminal;
         }
     }
 }
