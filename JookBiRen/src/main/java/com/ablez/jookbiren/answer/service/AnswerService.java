@@ -66,6 +66,7 @@ public class AnswerService {
                 answerInfo.getQuizInfo().getPlaceCode(),
                 answerInfo.getQuizInfo().getQuizNumber(), answerInfo.getAnswer());
         if (optionalAnswer.isPresent()) {
+            setAnswerTime(answerInfo, user);
             return new CheckAnswerResponseDto(true);
         } else {
             QuizEp01 quiz = quizRepository.findQuiz(answerInfo.getQuizInfo().getPlaceCode(),
@@ -75,9 +76,30 @@ public class AnswerService {
         }
     }
 
+    private void setAnswerTime(CheckAnswerDto answerInfo, UserEp01 user) {
+        if (answerInfo.getQuizInfo().getPlaceCode() == 0) {
+            Quiz0Ep01 quiz = quizInfoService.findByQuizNumberAndUser0(answerInfo.getQuizInfo().getQuizNumber(), user)
+                    .orElseThrow();
+            quiz.setFirstAnswerTime(LocalDateTime.now());
+        } else if (answerInfo.getQuizInfo().getPlaceCode() == 1) {
+            Quiz1Ep01 quiz = quizInfoService.findByQuizNumberAndUser1(answerInfo.getQuizInfo().getQuizNumber(), user)
+                    .orElseThrow();
+            quiz.setFirstAnswerTime(LocalDateTime.now());
+        } else if (answerInfo.getQuizInfo().getPlaceCode() == 2) {
+            Quiz2Ep01 quiz = quizInfoService.findByQuizNumberAndUser2(answerInfo.getQuizInfo().getQuizNumber(), user)
+                    .orElseThrow();
+            quiz.setFirstAnswerTime(LocalDateTime.now());
+        } else if (answerInfo.getQuizInfo().getPlaceCode() == 3) {
+            Quiz3Ep01 quiz = quizInfoService.findByQuizNumberAndUser3(answerInfo.getQuizInfo().getQuizNumber(), user)
+                    .orElseThrow();
+            quiz.setFirstAnswerTime(LocalDateTime.now());
+        }
+    }
+
     public SuspectResponseDto pickSuspect(UserEp01 user, SuspectDto suspectInfo) {
         if (user.getCriminal() == 0) {
             user.updateCriminal(suspectInfo.getSuspect());
+            user.setAnswerTime(LocalDateTime.now());
             return new SuspectResponseDto();
         } else {
             return new SuspectResponseDto(AnswerConstant.SUSPECT.get(user.getCriminal()));

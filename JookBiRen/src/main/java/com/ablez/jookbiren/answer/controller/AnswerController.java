@@ -5,7 +5,6 @@ import com.ablez.jookbiren.answer.dto.AnswerDto.SuspectDto;
 import com.ablez.jookbiren.answer.service.AnswerService;
 import com.ablez.jookbiren.dto.JookBiRenDto.Quiz;
 import com.ablez.jookbiren.security.interceptor.JwtParseInterceptor;
-import com.ablez.jookbiren.user.entity.UserEp01;
 import com.ablez.jookbiren.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,6 +37,8 @@ public class AnswerController {
 
     @PostMapping
     public ResponseEntity pickSuspect(@RequestBody SuspectDto suspectInfo) {
-        return new ResponseEntity(answerService.pickSuspect(new UserEp01(1L, "abc"), suspectInfo), HttpStatus.OK);
+        return new ResponseEntity(
+                answerService.pickSuspect(userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername()),
+                        suspectInfo), HttpStatus.OK);
     }
 }
