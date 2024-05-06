@@ -113,9 +113,41 @@ public class AnswerService {
         if (user.getCriminal() == 0) {
             user.updateCriminal(suspectInfo.getSuspect());
             user.setAnswerTime(LocalDateTime.now());
+            user.setScore(calculateScore(user));
             return new SuspectResponseDto();
         } else {
             return new SuspectResponseDto(AnswerConstant.SUSPECT.get(user.getCriminal()));
         }
+    }
+
+    private int calculateScore(UserEp01 user) {
+        int score = 0;
+        if (user.getCriminal() == 2) {
+            score += 5;
+        } else {
+            score += 1;
+        }
+
+        if (user.getAnswerCount() == 0) {
+            score += 5;
+        } else if (user.getAnswerCount() <= 3) {
+            score += 4;
+        } else if (user.getAnswerCount() <= 5) {
+            score += 3;
+        } else {
+            score += 1;
+        }
+
+        if (user.getSolvedQuizCount() == 19) {
+            score += 5;
+        } else if (user.getSolvedQuizCount() >= 16) {
+            score += 3;
+        } else if (user.getSolvedQuizCount() >= 13) {
+            score += 2;
+        } else {
+            score += 1;
+        }
+
+        return score;
     }
 }
