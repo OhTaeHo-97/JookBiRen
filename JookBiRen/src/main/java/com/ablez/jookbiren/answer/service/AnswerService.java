@@ -76,9 +76,6 @@ public class AnswerService {
                 answerInfo.getQuizInfo().getQuizNumber(), answerInfo.getAnswer());
         if (optionalAnswer.isPresent()) {
             setAnswerTime(answerInfo, user);
-            if (answerInfo.getQuizInfo().getPlaceCode() == 4) {
-                user.setAnswerTime(LocalDateTime.now());
-            }
             return new CheckAnswerResponseDto(true);
         } else {
             QuizEp01 quiz = quizRepository.findQuiz(answerInfo.getQuizInfo().getPlaceCode(),
