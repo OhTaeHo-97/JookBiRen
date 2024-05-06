@@ -47,15 +47,23 @@ public class AnswerService {
         if (quizInfo.getPlaceCode() == 0) {
             Quiz0Ep01 quiz = quizInfoService.findByQuizNumberAndUser0(quizInfo.getQuizNumber(), user).orElseThrow();
             quiz.setGetAnswerTime(LocalDateTime.now());
+            user.setAnswerCount(user.getAnswerCount() + 1);
         } else if (quizInfo.getPlaceCode() == 1) {
             Quiz1Ep01 quiz = quizInfoService.findByQuizNumberAndUser1(quizInfo.getQuizNumber(), user).orElseThrow();
             quiz.setGetAnswerTime(LocalDateTime.now());
+            user.setAnswerCount(user.getAnswerCount() + 1);
         } else if (quizInfo.getPlaceCode() == 2) {
             Quiz2Ep01 quiz = quizInfoService.findByQuizNumberAndUser2(quizInfo.getQuizNumber(), user).orElseThrow();
             quiz.setGetAnswerTime(LocalDateTime.now());
+            user.setAnswerCount(user.getAnswerCount() + 1);
         } else if (quizInfo.getPlaceCode() == 3) {
             Quiz3Ep01 quiz = quizInfoService.findByQuizNumberAndUser3(quizInfo.getQuizNumber(), user).orElseThrow();
             quiz.setGetAnswerTime(LocalDateTime.now());
+            user.setAnswerCount(user.getAnswerCount() + 1);
+        } else if (quizInfo.getPlaceCode() == 4) {
+            Quiz3Ep01 quiz = quizInfoService.findByQuizNumberAndUser3(quizInfo.getQuizNumber(), user).orElseThrow();
+            quiz.setGetAnswerTime(LocalDateTime.now());
+            user.setAnswerCount(user.getAnswerCount() + 1);
         }
 
         return new FindAnswerResponseDto(answer.getAnswer());
