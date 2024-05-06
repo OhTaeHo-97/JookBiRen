@@ -4,6 +4,7 @@ import com.ablez.jookbiren.quiz.entity.Quiz0Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz1Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz2Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz3Ep01;
+import com.ablez.jookbiren.quiz.entity.Quiz4Ep01;
 import com.ablez.jookbiren.quiz.entity.WrongAnswerEp01;
 import com.ablez.jookbiren.security.entity.Authority;
 import java.time.LocalDateTime;
@@ -61,6 +62,10 @@ public class UserEp01 {
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Quiz3Ep01> quiz3s = new ArrayList<>();
+
+    @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Setter
+    private Quiz4Ep01 quiz4s;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WrongAnswerEp01> wrongAnswers = new ArrayList<>();

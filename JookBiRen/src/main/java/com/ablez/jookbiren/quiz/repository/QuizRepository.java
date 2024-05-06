@@ -112,6 +112,16 @@ public class QuizRepository {
                 .fetch();
     }
 
+    public List<Quiz4Ep01> findAllQuiz4IsAnswer(UserEp01 user) {
+        return queryFactory
+                .selectFrom(quiz4Ep01)
+                .where(
+                        quiz4Ep01.userId.eq(user),
+                        quiz4Ep01.firstAnswerTime.isNotNull()
+                )
+                .fetch();
+    }
+
     public Optional<Quiz0Ep01> findByQuizNumberAndUser0(int quizNumber, UserEp01 user) {
         Quiz0Ep01 quiz = queryFactory
                 .selectFrom(quiz0Ep01)

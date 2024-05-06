@@ -9,6 +9,7 @@ import com.ablez.jookbiren.quiz.repository.Quiz0Repository;
 import com.ablez.jookbiren.quiz.repository.Quiz1Repository;
 import com.ablez.jookbiren.quiz.repository.Quiz2Repository;
 import com.ablez.jookbiren.quiz.repository.Quiz3Repository;
+import com.ablez.jookbiren.quiz.repository.Quiz4Repository;
 import com.ablez.jookbiren.quiz.repository.QuizRepository;
 import com.ablez.jookbiren.user.entity.UserEp01;
 import java.util.List;
@@ -26,6 +27,11 @@ public class QuizInfoService {
     private final Quiz1Repository quiz1Repository;
     private final Quiz2Repository quiz2Repository;
     private final Quiz3Repository quiz3Repository;
+    private final Quiz4Repository quiz4Repository;
+
+    public List<Quiz4Ep01> getGangnamSolvedQuizzes(UserEp01 user) {
+        return quizRepository.findAllQuiz4IsAnswer(user);
+    }
 
     public List<Quiz3Ep01> getSsamzigilSolvedQuizzes(UserEp01 user) {
         return quizRepository.findAllQuiz3IsAnswer(user);
@@ -61,6 +67,11 @@ public class QuizInfoService {
     public Quiz3Ep01 insertQuiz3(int quizNumber, UserEp01 user) {
         return quiz3Repository.save(
                 new Quiz3Ep01(quizNumber, user, quizRepository.findQuiz(3, quizNumber).orElseThrow()));
+    }
+
+    public Quiz4Ep01 insertQuiz4(int quizNumber, UserEp01 user) {
+        return quiz4Repository.save(
+                new Quiz4Ep01(quizNumber, user, quizRepository.findQuiz(4, quizNumber).orElseThrow()));
     }
 
     public Optional<Quiz0Ep01> findByQuizNumberAndUser0(int quizNumber, UserEp01 user) {

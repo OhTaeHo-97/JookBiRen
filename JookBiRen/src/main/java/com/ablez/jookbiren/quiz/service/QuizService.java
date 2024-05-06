@@ -10,10 +10,7 @@ import com.ablez.jookbiren.quiz.entity.Quiz0Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz1Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz2Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz3Ep01;
-import com.ablez.jookbiren.quiz.repository.Quiz0Repository;
-import com.ablez.jookbiren.quiz.repository.Quiz1Repository;
-import com.ablez.jookbiren.quiz.repository.Quiz2Repository;
-import com.ablez.jookbiren.quiz.repository.Quiz3Repository;
+import com.ablez.jookbiren.quiz.entity.Quiz4Ep01;
 import com.ablez.jookbiren.quiz.repository.QuizRepository;
 import com.ablez.jookbiren.user.entity.UserEp01;
 import java.time.LocalDateTime;
@@ -28,10 +25,10 @@ import org.springframework.stereotype.Service;
 @Transactional
 public class QuizService {
     private final QuizRepository quizRepository;
-    private final Quiz0Repository quiz0Repository;
-    private final Quiz1Repository quiz1Repository;
-    private final Quiz2Repository quiz2Repository;
-    private final Quiz3Repository quiz3Repository;
+    //    private final Quiz0Repository quiz0Repository;
+//    private final Quiz1Repository quiz1Repository;
+//    private final Quiz2Repository quiz2Repository;
+//    private final Quiz3Repository quiz3Repository;
     private final AnswerService answerService;
     private final QuizInfoService quizInfoService;
 
@@ -44,6 +41,8 @@ public class QuizService {
             return getCurrentSituationAndBukchonSolvedProblems(user);
         } else if (placeCode == 3) {
             return getCurrentSituationAndSsamzigilSolvedProblems(user);
+        } else if (placeCode == 4) {
+            return getCurrentSituationAndGangNamSolvedProblems(user);
         }
 
         throw new IllegalArgumentException("잘못된 장소코드!");
@@ -53,6 +52,13 @@ public class QuizService {
 //        List<Quiz0Ep01> solvedQuizzes = quizRepository.findAllQuiz0(user);
 //
 //        return new PageDto(user.getSolvedQuizCount(), user.getAnswerCount(), quizzesToQuizNumbers(solvedQuizzes));
+    }
+
+    private PageDto getCurrentSituationAndGangNamSolvedProblems(UserEp01 user) {
+        List<Quiz4Ep01> solvedQuizzes = quizInfoService.getGangnamSolvedQuizzes(user);
+        List<Integer> quizNumbers = solvedQuizzes.stream().map(quiz -> quiz.getQuiz().getQuizNumber())
+                .collect(Collectors.toList());
+        return new PageDto(user.getSolvedQuizCount(), user.getAnswerCount(), quizNumbers);
     }
 
     private PageDto getCurrentSituationAndSsamzigilSolvedProblems(UserEp01 user) {
@@ -100,8 +106,25 @@ public class QuizService {
             return findAnswerOfBukchon(user, quizInfo);
         } else if (quizInfo.getPlaceCode() == 3) {
             return findAnswerOfSsamzigil(user, quizInfo);
+        } else if (quizInfo.getPlaceCode() == 4) {
+            return findAnswerOfGangnam(user, quizInfo);
         } else {
             throw new RuntimeException();
+        }
+    }
+
+    private QuizPageDto findAnswerOfGangnam(UserEp01 user, Quiz quizInfo) {
+        Quiz4Ep01 quiz = quizInfoService.findByQuizNumberAndUser4(quizInfo.getQuizNumber(), user).orElse(null);
+        if (quiz == null) {
+            Quiz4Ep01 newQuiz = quizInfoService.insertQuiz4(quizInfo.getQuizNumber(), user);
+            user.setQuiz4s(newQuiz);
+            return new QuizPageDto();
+        } else if (quiz.getFirstAnswerTime() == null) {
+            return new QuizPageDto();
+        } else {
+            FindAnswerResponseDto answer = answerService.findAnswer(
+                    new Quiz(quiz.getQuiz().getPlaceCode(), quiz.getQuiz().getQuizNumber()));
+            return new QuizPageDto(answer.getAnswer());
         }
     }
 
@@ -197,6 +220,12 @@ public class QuizService {
                 Quiz3Ep01 quiz3Ep01 = quizRepository.findByQuizNumberAndUser3(quizInfo.getQuizNumber(), user)
                         .orElseThrow();
                 quiz3Ep01.setGetHintTime(LocalDateTime.now());
+            } else if (quizInfo.getPlaceCode() == 4) {
+                Quiz4Ep01 quiz4Ep01 = quizRepository.findByQuizNumberAndUser4(quizInfo.getQuizNumber(), user)
+                        .orElseThrow();
+                quiz4Ep01.setGetHintTime(LocalDateTime.now());
+            } else {
+                throw new RuntimeException();
             }
         }
 
