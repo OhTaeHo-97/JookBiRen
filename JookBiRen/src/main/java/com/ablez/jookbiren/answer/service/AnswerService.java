@@ -13,6 +13,10 @@ import com.ablez.jookbiren.quiz.entity.Quiz0Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz1Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz2Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz3Ep01;
+import com.ablez.jookbiren.quiz.entity.QuizEp01;
+import com.ablez.jookbiren.quiz.entity.WrongAnswerEp01;
+import com.ablez.jookbiren.quiz.repository.QuizRepository;
+import com.ablez.jookbiren.quiz.repository.WrongAnswerRepository;
 import com.ablez.jookbiren.quiz.service.QuizInfoService;
 import com.ablez.jookbiren.user.entity.UserEp01;
 import java.time.LocalDateTime;
@@ -28,6 +32,8 @@ import org.springframework.stereotype.Service;
 public class AnswerService {
     private final AnswerRepository answerRepository;
     private final QuizInfoService quizInfoService;
+    private final QuizRepository quizRepository;
+    private final WrongAnswerRepository wrongAnswerRepository;
 
     public FindAnswerResponseDto findAnswer(Quiz quizInfo) {
         AnswerEp01 answer = answerRepository.findByQuiz(quizInfo.getPlaceCode(), quizInfo.getQuizNumber())
@@ -55,11 +61,18 @@ public class AnswerService {
         return new FindAnswerResponseDto(answer.getAnswer());
     }
 
-    public CheckAnswerResponseDto checkAnswer(CheckAnswerDto answerInfo) {
+    public CheckAnswerResponseDto checkAnswer(CheckAnswerDto answerInfo, UserEp01 user) {
         Optional<AnswerEp01> optionalAnswer = answerRepository.findByQuizAndAnswer(
                 answerInfo.getQuizInfo().getPlaceCode(),
                 answerInfo.getQuizInfo().getQuizNumber(), answerInfo.getAnswer());
-        return new CheckAnswerResponseDto(optionalAnswer.isPresent());
+        if (optionalAnswer.isPresent()) {
+            return new CheckAnswerResponseDto(true);
+        } else {
+            QuizEp01 quiz = quizRepository.findQuiz(answerInfo.getQuizInfo().getPlaceCode(),
+                    answerInfo.getQuizInfo().getQuizNumber()).orElseThrow();
+            wrongAnswerRepository.save(new WrongAnswerEp01(answerInfo.getAnswer(), LocalDateTime.now(), user, quiz));
+            return new CheckAnswerResponseDto(false);
+        }
     }
 
     public SuspectResponseDto pickSuspect(UserEp01 user, SuspectDto suspectInfo) {

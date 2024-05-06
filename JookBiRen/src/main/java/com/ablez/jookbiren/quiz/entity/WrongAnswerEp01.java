@@ -27,4 +27,11 @@ public class WrongAnswerEp01 {
     @ManyToOne
     @JoinColumn(name = "quiz_id")
     private QuizEp01 quiz;
+
+    public WrongAnswerEp01(String answer, LocalDateTime time, UserEp01 user, QuizEp01 quiz) {
+        this.answer = answer;
+        this.time = time;
+        this.user = user;
+        this.quiz = quiz;
+    }
 }

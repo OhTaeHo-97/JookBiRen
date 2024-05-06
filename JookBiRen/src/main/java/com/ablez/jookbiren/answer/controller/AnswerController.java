@@ -4,7 +4,9 @@ import com.ablez.jookbiren.answer.dto.AnswerDto.CheckAnswerDto;
 import com.ablez.jookbiren.answer.dto.AnswerDto.SuspectDto;
 import com.ablez.jookbiren.answer.service.AnswerService;
 import com.ablez.jookbiren.dto.JookBiRenDto.Quiz;
+import com.ablez.jookbiren.security.interceptor.JwtParseInterceptor;
 import com.ablez.jookbiren.user.entity.UserEp01;
+import com.ablez.jookbiren.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,15 +21,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/answers")
 public class AnswerController {
     private final AnswerService answerService;
+    private final UserService userService;
 
     @GetMapping
     public ResponseEntity findAnswer(String quiz) {
-        return new ResponseEntity<>(answerService.findAnswer(new Quiz(quiz), new UserEp01(1L, "abc")), HttpStatus.OK);
+        return new ResponseEntity<>(answerService.findAnswer(new Quiz(quiz),
+                userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername())), HttpStatus.OK);
     }
 
     @GetMapping("/quiz")
     public ResponseEntity checkAnswer(CheckAnswerDto dto) {
-        return new ResponseEntity<>(answerService.checkAnswer(dto), HttpStatus.OK);
+        return new ResponseEntity<>(
+                answerService.checkAnswer(dto, userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername())),
+                HttpStatus.OK);
     }
 
     @PostMapping
