@@ -6,6 +6,7 @@ import com.ablez.jookbiren.dto.JookBiRenDto.Quiz;
 import com.ablez.jookbiren.quiz.dto.QuizDto.HintDto;
 import com.ablez.jookbiren.quiz.dto.QuizDto.PageDto;
 import com.ablez.jookbiren.quiz.dto.QuizDto.QuizPageDto;
+import com.ablez.jookbiren.quiz.dto.QuizDto.StatusDto;
 import com.ablez.jookbiren.quiz.entity.Quiz0Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz1Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz2Ep01;
@@ -24,6 +25,8 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 public class QuizService {
+    private static final int STAR_QUIZ_COUNT = 4;
+
     private final QuizRepository quizRepository;
     //    private final Quiz0Repository quiz0Repository;
 //    private final Quiz1Repository quiz1Repository;
@@ -241,5 +244,10 @@ public class QuizService {
 ////            return new HintDto(hint.getHint());
 //            return new HintDto(true);
 //        }
+    }
+
+    public StatusDto canPickSuspect(UserEp01 user) {
+        int answerStatus = user.getAnswerStatusCode();
+        return new StatusDto(answerStatus == (Math.pow(2, STAR_QUIZ_COUNT) - 1));
     }
 }
