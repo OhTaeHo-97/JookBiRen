@@ -20,7 +20,7 @@ public class AnswerDto {
 
         public CheckAnswerDto(String quiz, String answer) {
             this.quizInfo = new Quiz(quiz);
-            this.answer = answer;
+            this.answer = answer.toUpperCase();
         }
     }
 

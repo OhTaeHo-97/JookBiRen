@@ -28,14 +28,14 @@ public class AnswerController {
                 userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername())), HttpStatus.OK);
     }
 
-    @GetMapping("/quiz")
-    public ResponseEntity checkAnswer(CheckAnswerDto dto) {
+    @PostMapping
+    public ResponseEntity checkAnswer(@RequestBody CheckAnswerDto dto) {
         return new ResponseEntity<>(
                 answerService.checkAnswer(dto, userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername())),
                 HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/pick")
     public ResponseEntity pickSuspect(@RequestBody SuspectDto suspectInfo) {
         return new ResponseEntity(
                 answerService.pickSuspect(userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername()),
