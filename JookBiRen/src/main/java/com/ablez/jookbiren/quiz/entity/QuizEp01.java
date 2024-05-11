@@ -16,7 +16,9 @@ public class QuizEp01 {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long quizId;
     @Column(nullable = false)
-    private int placeCode;
+    private Integer placeCode;
     @Column(nullable = false)
-    private int quizNumber;
+    private Integer quizNumber;
+    @Column(nullable = false)
+    private Integer quizCode;
 }

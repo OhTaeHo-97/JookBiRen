@@ -74,15 +74,24 @@ public class AnswerService {
         Optional<AnswerEp01> optionalAnswer = answerRepository.findByQuizAndAnswer(
                 answerInfo.getQuizInfo().getPlaceCode(),
                 answerInfo.getQuizInfo().getQuizNumber(), answerInfo.getAnswer());
+        QuizEp01 quiz = quizRepository.findQuiz(answerInfo.getQuizInfo().getPlaceCode(),
+                answerInfo.getQuizInfo().getQuizNumber()).orElseThrow();
         if (optionalAnswer.isPresent()) {
+            updateUserAnswerStatus(quiz, user);
             setAnswerTime(answerInfo, user);
             return new CheckAnswerResponseDto(true);
         } else {
-            QuizEp01 quiz = quizRepository.findQuiz(answerInfo.getQuizInfo().getPlaceCode(),
-                    answerInfo.getQuizInfo().getQuizNumber()).orElseThrow();
             wrongAnswerRepository.save(new WrongAnswerEp01(answerInfo.getAnswer(), LocalDateTime.now(), user, quiz));
             return new CheckAnswerResponseDto(false);
         }
+    }
+
+    private void updateUserAnswerStatus(QuizEp01 quiz, UserEp01 user) {
+        if (quiz.getQuizCode() == -1) {
+            return;
+        }
+        int answerStatus = user.getAnswerStatusCode();
+        user.setAnswerStatusCode(answerStatus | (1 << quiz.getQuizCode()));
     }
 
     private void setAnswerTime(CheckAnswerDto answerInfo, UserEp01 user) {
