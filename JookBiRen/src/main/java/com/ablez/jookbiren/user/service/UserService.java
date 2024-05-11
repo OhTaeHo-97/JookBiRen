@@ -13,6 +13,7 @@ import com.ablez.jookbiren.user.dto.UserDto.CodeDto;
 import com.ablez.jookbiren.user.dto.UserDto.EndingDto;
 import com.ablez.jookbiren.user.dto.UserDto.InfoDto;
 import com.ablez.jookbiren.user.dto.UserDto.LoginDto;
+import com.ablez.jookbiren.user.dto.UserDto.StatusDto;
 import com.ablez.jookbiren.user.entity.UserEp01;
 import com.ablez.jookbiren.user.repository.UserRepository;
 import java.time.Duration;
@@ -26,6 +27,8 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 public class UserService {
+    private static final int STAR_QUIZ_COUNT = 4;
+
     private final UserRepository userRepository;
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -89,5 +92,12 @@ public class UserService {
 
     private TokenDto reissueToken(String username) {
         return new TokenDto(jwtTokenizer.generateAccessToken(username), saveRefreshToken(username).getRefreshToken());
+    }
+
+    public StatusDto canPickSuspect() {
+        UserEp01 user = findByCode(jwtParseInterceptor.getAuthenticatedUsername());
+
+        int answerStatus = user.getAnswerStatusCode();
+        return new StatusDto(answerStatus == (Math.pow(2, STAR_QUIZ_COUNT) - 1));
     }
 }

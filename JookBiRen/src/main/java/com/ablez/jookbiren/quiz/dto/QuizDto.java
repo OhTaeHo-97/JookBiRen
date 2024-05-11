@@ -38,13 +38,4 @@ public class QuizDto {
             this.hint = hint;
         }
     }
-
-    @Getter
-    public static class StatusDto {
-        private boolean status;
-
-        public StatusDto(boolean status) {
-            this.status = status;
-        }
-    }
 }

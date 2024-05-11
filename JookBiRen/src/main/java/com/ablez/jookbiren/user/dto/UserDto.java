@@ -32,6 +32,15 @@ public class UserDto {
     }
 
     @Getter
+    public static class StatusDto {
+        private boolean status;
+
+        public StatusDto(boolean status) {
+            this.status = status;
+        }
+    }
+
+    @Getter
     public static class InfoDto {
         private int score;
         private long playtime;

@@ -36,11 +36,4 @@ public class QuizController {
                 quizService.findHint(userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername()),
                         new Quiz(quiz)), HttpStatus.OK);
     }
-
-    @GetMapping("/status")
-    public ResponseEntity canPickSuspect() {
-        return new ResponseEntity(
-                quizService.canPickSuspect(userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername())),
-                HttpStatus.OK);
-    }
 }
