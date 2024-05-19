@@ -152,7 +152,7 @@ public class QuizService {
         Quiz2Ep01 quiz = quizInfoService.findByQuizNumberAndUser2(quizInfo.getQuizNumber(), user).orElse(null);
 //        Quiz2Ep01 quiz = quizRepository.findByQuizNumberAndUser2(quizInfo.getQuizNumber(), user).orElse(null);
         if (quiz == null) {
-            Quiz2Ep01 newQuiz = quizInfoService.insertQuiz2(quiz.getQuizNumber(), user);
+            Quiz2Ep01 newQuiz = quizInfoService.insertQuiz2(quizInfo.getQuizNumber(), user);
 //            Quiz2Ep01 newQuiz = quiz2Repository.save(new Quiz2Ep01(quizInfo.getQuizNumber(), user,
 //                    quizRepository.findQuiz(2, quizInfo.getQuizNumber()).orElseThrow()));
             user.addQuiz2(newQuiz);
