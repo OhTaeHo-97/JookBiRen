@@ -76,8 +76,7 @@ public class UserEp01 {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WrongAnswerEp01> wrongAnswers = new ArrayList<>();
 
-    public UserEp01(Long userId, String code) {
-        this.userId = userId;
+    public UserEp01(String code) {
         this.code = code;
     }
 

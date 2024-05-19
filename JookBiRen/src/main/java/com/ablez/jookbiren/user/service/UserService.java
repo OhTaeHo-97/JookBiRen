@@ -6,6 +6,7 @@ import static com.ablez.jookbiren.security.utils.JwtExpirationEnums.REFRESH_TOKE
 
 import com.ablez.jookbiren.exception.BusinessLogicException;
 import com.ablez.jookbiren.exception.ExceptionCode;
+import com.ablez.jookbiren.security.entity.Authority;
 import com.ablez.jookbiren.security.interceptor.JwtParseInterceptor;
 import com.ablez.jookbiren.security.jwt.JwtTokenizer;
 import com.ablez.jookbiren.security.redis.repository.RefreshTokenRepository;
@@ -17,6 +18,7 @@ import com.ablez.jookbiren.user.dto.UserDto.InfoDto;
 import com.ablez.jookbiren.user.dto.UserDto.LoginDto;
 import com.ablez.jookbiren.user.dto.UserDto.StatusDto;
 import com.ablez.jookbiren.user.entity.UserEp01;
+import com.ablez.jookbiren.user.repository.UserJpaRepository;
 import com.ablez.jookbiren.user.repository.UserRepository;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ public class UserService {
     private static final int STAR_QUIZ_COUNT = 4;
 
     private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtParseInterceptor jwtParseInterceptor;
@@ -101,5 +104,12 @@ public class UserService {
 
         int answerStatus = user.getAnswerStatusCode();
         return new StatusDto(answerStatus == (Math.pow(2, STAR_QUIZ_COUNT) - 1));
+    }
+
+    public void register(CodeDto codeInfo) {
+        UserEp01 newUser = new UserEp01(codeInfo.getCode());
+        Authority authority = new Authority("ROLE_USER", newUser);
+        newUser.addRole(authority);
+        userJpaRepository.save(newUser);
     }
 }

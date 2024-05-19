@@ -55,4 +55,10 @@ public class UserController {
     public ResponseEntity getUserInfo() {
         return new ResponseEntity(userService.getInfo(), HttpStatus.OK);
     }
+
+    @PostMapping
+    public ResponseEntity register(@RequestBody @Valid CodeDto codeInfo) {
+        userService.register(codeInfo);
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }

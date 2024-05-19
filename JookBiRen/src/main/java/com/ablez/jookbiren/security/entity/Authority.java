@@ -30,6 +30,11 @@ public class Authority implements GrantedAuthority {
     @JoinColumn(name = "USER_ID")
     private UserEp01 user;
 
+    public Authority(String role, UserEp01 user) {
+        this.role = role;
+        this.user = user;
+    }
+
     @Override
     public String getAuthority() {
         return role;
