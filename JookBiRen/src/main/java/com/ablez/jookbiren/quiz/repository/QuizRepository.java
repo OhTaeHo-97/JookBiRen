@@ -187,7 +187,7 @@ public class QuizRepository {
                 .selectFrom(quiz4Ep01)
                 .join(quiz4Ep01.quiz, quizEp01)
                 .where(
-                        quizEp01.placeCode.eq(3),
+                        quizEp01.placeCode.eq(4),
                         quizEp01.quizNumber.eq(quizNumber),
                         quiz4Ep01.userId.eq(user)
                 )
