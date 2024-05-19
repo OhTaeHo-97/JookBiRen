@@ -3,6 +3,7 @@ package com.ablez.jookbiren.user.service;
 import static com.ablez.jookbiren.answer.constant.AnswerConstant.SUSPECT;
 import static com.ablez.jookbiren.security.jwt.JwtDto.TokenDto;
 import static com.ablez.jookbiren.security.utils.JwtExpirationEnums.REFRESH_TOKEN_EXPIRATION_TIME;
+import static com.ablez.jookbiren.utils.JookBiRenConstant.STAR_QUIZ_COUNT;
 
 import com.ablez.jookbiren.exception.BusinessLogicException;
 import com.ablez.jookbiren.exception.ExceptionCode;
@@ -30,8 +31,6 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 public class UserService {
-    private static final int STAR_QUIZ_COUNT = 4;
-
     private final UserRepository userRepository;
     private final UserJpaRepository userJpaRepository;
     private final JwtTokenizer jwtTokenizer;
@@ -69,7 +68,7 @@ public class UserService {
 
         LocalDateTime firstLoginTime = user.getFirstLoginTime();
         LocalDateTime answerTime = user.getAnswerTime();
-        Duration duration = Duration.between(answerTime, firstLoginTime);
+        Duration duration = Duration.between(firstLoginTime, answerTime);
 
         return new InfoDto(user.getScore(), duration.toMinutes(), user.getAnswerCount(), user.getSolvedQuizCount(),
                 SUSPECT.get(user.getCriminal()));

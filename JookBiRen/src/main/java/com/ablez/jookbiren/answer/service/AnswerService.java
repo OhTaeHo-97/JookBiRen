@@ -1,5 +1,7 @@
 package com.ablez.jookbiren.answer.service;
 
+import static com.ablez.jookbiren.utils.JookBiRenConstant.STAR_QUIZ_COUNT;
+
 import com.ablez.jookbiren.answer.constant.AnswerConstant;
 import com.ablez.jookbiren.answer.dto.AnswerDto.CheckAnswerDto;
 import com.ablez.jookbiren.answer.dto.AnswerDto.CheckAnswerResponseDto;
@@ -141,6 +143,10 @@ public class AnswerService {
     }
 
     public SuspectResponseDto pickSuspect(UserEp01 user, SuspectDto suspectInfo) {
+        if(user.getAnswerStatusCode() != (1 << STAR_QUIZ_COUNT) - 1) {
+            throw new BusinessLogicException(ExceptionCode.CANNOT_PICK_SUSPECT);
+        }
+
         if (user.getCriminal() == 0) {
             user.updateCriminal(suspectInfo.getSuspect());
             user.setAnswerTime(LocalDateTime.now());
