@@ -209,23 +209,33 @@ public class QuizService {
             if (quizInfo.getPlaceCode() == 0) {
                 Quiz0Ep01 quiz0Ep01 = quizRepository.findByQuizNumberAndUser0(quizInfo.getQuizNumber(), user)
                         .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
-                quiz0Ep01.setGetHintTime(LocalDateTime.now());
+                if (quiz0Ep01.getGetHintTime() == null) {
+                    quiz0Ep01.setGetHintTime(LocalDateTime.now());
+                }
             } else if (quizInfo.getPlaceCode() == 1) {
                 Quiz1Ep01 quiz1Ep01 = quizRepository.findByQuizNumberAndUser1(quizInfo.getQuizNumber(), user)
                         .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
-                quiz1Ep01.setGetHintTime(LocalDateTime.now());
+                if (quiz1Ep01.getGetHintTime() == null) {
+                    quiz1Ep01.setGetHintTime(LocalDateTime.now());
+                }
             } else if (quizInfo.getPlaceCode() == 2) {
                 Quiz2Ep01 quiz2Ep01 = quizRepository.findByQuizNumberAndUser2(quizInfo.getQuizNumber(), user)
                         .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
-                quiz2Ep01.setGetHintTime(LocalDateTime.now());
+                if (quiz2Ep01.getGetHintTime() == null) {
+                    quiz2Ep01.setGetHintTime(LocalDateTime.now());
+                }
             } else if (quizInfo.getPlaceCode() == 3) {
                 Quiz3Ep01 quiz3Ep01 = quizRepository.findByQuizNumberAndUser3(quizInfo.getQuizNumber(), user)
                         .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
-                quiz3Ep01.setGetHintTime(LocalDateTime.now());
+                if(quiz3Ep01.getGetHintTime() == null) {
+                    quiz3Ep01.setGetHintTime(LocalDateTime.now());
+                }
             } else if (quizInfo.getPlaceCode() == 4) {
                 Quiz4Ep01 quiz4Ep01 = quizRepository.findByQuizNumberAndUser4(quizInfo.getQuizNumber(), user)
                         .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
-                quiz4Ep01.setGetHintTime(LocalDateTime.now());
+                if (quiz4Ep01.getGetHintTime() == null) {
+                    quiz4Ep01.setGetHintTime(LocalDateTime.now());
+                }
             } else {
                 throw new BusinessLogicException(ExceptionCode.INVALID_PLACE_CODE);
             }
