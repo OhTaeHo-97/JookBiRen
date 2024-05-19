@@ -65,6 +65,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/v1/users/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/v1/users").permitAll()
 //                .antMatchers(HttpMethod.GET, "/v1/users/info").hasRole("USER")
 //                .antMatchers(HttpMethod.POST, "/users/login").hasRole("USER")
                 .anyRequest().hasRole("USER")
@@ -97,6 +98,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new JwtParseInterceptor(jwtUtils))
                 .addPathPatterns("/v1/users/**")
-                .addPathPatterns("/reviewBoards/**");
+                .addPathPatterns("/v1/quizzes/**")
+                .addPathPatterns("/v1/answers/**");
     }
 }
