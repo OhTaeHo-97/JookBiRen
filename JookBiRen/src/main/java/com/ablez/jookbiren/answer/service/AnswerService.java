@@ -85,6 +85,7 @@ public class AnswerService {
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_NOT_FOUND));
         if (optionalAnswer.isPresent()) {
             updateUserAnswerStatus(quiz, user);
+            updateSolvedQuizCount(user);
             setAnswerTime(answerInfo, user);
             return new CheckAnswerResponseDto(true);
         } else {
@@ -99,6 +100,10 @@ public class AnswerService {
         }
         int answerStatus = user.getAnswerStatusCode();
         user.setAnswerStatusCode(answerStatus | (1 << quiz.getQuizCode()));
+    }
+
+    private void updateSolvedQuizCount(UserEp01 user) {
+        user.setSolvedQuizCount(user.getSolvedQuizCount() + 1);
     }
 
     private void setAnswerTime(CheckAnswerDto answerInfo, UserEp01 user) {

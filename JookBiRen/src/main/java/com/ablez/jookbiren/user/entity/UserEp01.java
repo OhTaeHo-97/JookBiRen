@@ -44,6 +44,7 @@ public class UserEp01 {
     @Setter
     @ColumnDefault("0")
     private Integer answerCount = 0;
+    @Setter
     @ColumnDefault("0")
     private Integer solvedQuizCount = 0;
     @Setter
