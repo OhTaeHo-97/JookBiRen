@@ -3,6 +3,8 @@ package com.ablez.jookbiren.quiz.service;
 import com.ablez.jookbiren.answer.dto.AnswerDto.FindAnswerResponseDto;
 import com.ablez.jookbiren.answer.service.AnswerService;
 import com.ablez.jookbiren.dto.JookBiRenDto.Quiz;
+import com.ablez.jookbiren.exception.BusinessLogicException;
+import com.ablez.jookbiren.exception.ExceptionCode;
 import com.ablez.jookbiren.quiz.dto.QuizDto.HintDto;
 import com.ablez.jookbiren.quiz.dto.QuizDto.PageDto;
 import com.ablez.jookbiren.quiz.dto.QuizDto.QuizPageDto;
@@ -45,7 +47,7 @@ public class QuizService {
             return getCurrentSituationAndGangNamSolvedProblems(user);
         }
 
-        throw new IllegalArgumentException("잘못된 장소코드!");
+        throw new BusinessLogicException(ExceptionCode.INVALID_PLACE_CODE);
 
 //        user.getSolvedQuizCount();
 //        user.getAnswerCount();
@@ -109,7 +111,7 @@ public class QuizService {
         } else if (quizInfo.getPlaceCode() == 4) {
             return findAnswerOfGangnam(user, quizInfo);
         } else {
-            throw new RuntimeException();
+            throw new BusinessLogicException(ExceptionCode.QUIZ_NOT_FOUND); // 잘못된 퀴즈 정보
         }
     }
 
@@ -206,26 +208,26 @@ public class QuizService {
         if (checkAlreadySolvedQuiz.getAnswer().isEmpty()) {
             if (quizInfo.getPlaceCode() == 0) {
                 Quiz0Ep01 quiz0Ep01 = quizRepository.findByQuizNumberAndUser0(quizInfo.getQuizNumber(), user)
-                        .orElseThrow();
+                        .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
                 quiz0Ep01.setGetHintTime(LocalDateTime.now());
             } else if (quizInfo.getPlaceCode() == 1) {
                 Quiz1Ep01 quiz1Ep01 = quizRepository.findByQuizNumberAndUser1(quizInfo.getQuizNumber(), user)
-                        .orElseThrow();
+                        .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
                 quiz1Ep01.setGetHintTime(LocalDateTime.now());
             } else if (quizInfo.getPlaceCode() == 2) {
                 Quiz2Ep01 quiz2Ep01 = quizRepository.findByQuizNumberAndUser2(quizInfo.getQuizNumber(), user)
-                        .orElseThrow();
+                        .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
                 quiz2Ep01.setGetHintTime(LocalDateTime.now());
             } else if (quizInfo.getPlaceCode() == 3) {
                 Quiz3Ep01 quiz3Ep01 = quizRepository.findByQuizNumberAndUser3(quizInfo.getQuizNumber(), user)
-                        .orElseThrow();
+                        .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
                 quiz3Ep01.setGetHintTime(LocalDateTime.now());
             } else if (quizInfo.getPlaceCode() == 4) {
                 Quiz4Ep01 quiz4Ep01 = quizRepository.findByQuizNumberAndUser4(quizInfo.getQuizNumber(), user)
-                        .orElseThrow();
+                        .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
                 quiz4Ep01.setGetHintTime(LocalDateTime.now());
             } else {
-                throw new RuntimeException();
+                throw new BusinessLogicException(ExceptionCode.INVALID_PLACE_CODE);
             }
         }
 

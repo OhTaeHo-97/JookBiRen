@@ -1,5 +1,7 @@
 package com.ablez.jookbiren.quiz.service;
 
+import com.ablez.jookbiren.exception.BusinessLogicException;
+import com.ablez.jookbiren.exception.ExceptionCode;
 import com.ablez.jookbiren.quiz.entity.Quiz0Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz1Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz2Ep01;
@@ -50,28 +52,28 @@ public class QuizInfoService {
     }
 
     public Quiz0Ep01 insertQuiz0(int quizNumber, UserEp01 user) {
-        return quiz0Repository.save(
-                new Quiz0Ep01(quizNumber, user, quizRepository.findQuiz(0, quizNumber).orElseThrow()));
+        return quiz0Repository.save(new Quiz0Ep01(quizNumber, user, quizRepository.findQuiz(0, quizNumber)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_NOT_FOUND))));
     }
 
     public Quiz1Ep01 insertQuiz1(int quizNumber, UserEp01 user) {
-        return quiz1Repository.save(
-                new Quiz1Ep01(quizNumber, user, quizRepository.findQuiz(1, quizNumber).orElseThrow()));
+        return quiz1Repository.save(new Quiz1Ep01(quizNumber, user, quizRepository.findQuiz(1, quizNumber)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_NOT_FOUND))));
     }
 
     public Quiz2Ep01 insertQuiz2(int quizNumber, UserEp01 user) {
-        return quiz2Repository.save(
-                new Quiz2Ep01(quizNumber, user, quizRepository.findQuiz(2, quizNumber).orElseThrow()));
+        return quiz2Repository.save(new Quiz2Ep01(quizNumber, user, quizRepository.findQuiz(2, quizNumber)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_NOT_FOUND))));
     }
 
     public Quiz3Ep01 insertQuiz3(int quizNumber, UserEp01 user) {
-        return quiz3Repository.save(
-                new Quiz3Ep01(quizNumber, user, quizRepository.findQuiz(3, quizNumber).orElseThrow()));
+        return quiz3Repository.save(new Quiz3Ep01(quizNumber, user, quizRepository.findQuiz(3, quizNumber)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_NOT_FOUND))));
     }
 
     public Quiz4Ep01 insertQuiz4(int quizNumber, UserEp01 user) {
-        return quiz4Repository.save(
-                new Quiz4Ep01(quizNumber, user, quizRepository.findQuiz(4, quizNumber).orElseThrow()));
+        return quiz4Repository.save(new Quiz4Ep01(quizNumber, user, quizRepository.findQuiz(4, quizNumber)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_NOT_FOUND))));
     }
 
     public Optional<Quiz0Ep01> findByQuizNumberAndUser0(int quizNumber, UserEp01 user) {

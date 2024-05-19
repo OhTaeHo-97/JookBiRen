@@ -4,7 +4,11 @@ import lombok.Getter;
 
 public enum ExceptionCode {
     QUIZ_NOT_FOUND(400, "Quiz Not Found"),
-    QUIZ_HISTORY_NOT_FOUND(500, "Quiz History Not Found");
+    QUIZ_HISTORY_NOT_FOUND(500, "Quiz History Not Found"),
+    INVALID_PLACE_CODE(400, "Invalid Place Code"),
+    INVALID_REFRESH_TOKEN(401, "Invalid Refresh Token"),
+    INVALID_USER_CODE(400, "Invalid User Code"),
+    INVALID_TOKEN_TYPE(401, "Invalid Token Type");
 
     @Getter
     private int status;

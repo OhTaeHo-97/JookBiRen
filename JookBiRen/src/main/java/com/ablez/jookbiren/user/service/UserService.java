@@ -4,6 +4,8 @@ import static com.ablez.jookbiren.answer.constant.AnswerConstant.SUSPECT;
 import static com.ablez.jookbiren.security.jwt.JwtDto.TokenDto;
 import static com.ablez.jookbiren.security.utils.JwtExpirationEnums.REFRESH_TOKEN_EXPIRATION_TIME;
 
+import com.ablez.jookbiren.exception.BusinessLogicException;
+import com.ablez.jookbiren.exception.ExceptionCode;
 import com.ablez.jookbiren.security.interceptor.JwtParseInterceptor;
 import com.ablez.jookbiren.security.jwt.JwtTokenizer;
 import com.ablez.jookbiren.security.redis.repository.RefreshTokenRepository;
@@ -18,7 +20,6 @@ import com.ablez.jookbiren.user.entity.UserEp01;
 import com.ablez.jookbiren.user.repository.UserRepository;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,13 +51,13 @@ public class UserService {
         refreshToken = validateToken(refreshToken);
         String username = jwtTokenizer.getUsername(refreshToken);
         RefreshToken existedRefreshToken = refreshTokenRepository.findById(username)
-                .orElseThrow(() -> new NoSuchElementException("잘못된 리프레시 토큰"));
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_REFRESH_TOKEN));
 
         if (refreshToken.equals(existedRefreshToken.getRefreshToken())) {
             return reissueToken(username);
         }
 
-        throw new IllegalArgumentException();
+        throw new BusinessLogicException(ExceptionCode.INVALID_REFRESH_TOKEN);
     }
 
     public InfoDto getInfo() {
@@ -80,12 +81,13 @@ public class UserService {
     }
 
     public UserEp01 findByCode(String code) {
-        return userRepository.findByCode(code).orElseThrow(() -> new NoSuchElementException("잘못된 코드"));
+        return userRepository.findByCode(code)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_USER_CODE));
     }
 
     private String validateToken(String token) {
         if (!token.startsWith(JwtHeaderUtilEnums.GRANT_TYPE.getValue())) {
-            throw new IllegalArgumentException("토큰 타입 잘못됨");
+            throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN_TYPE);
         }
         return token.substring(7);
     }
