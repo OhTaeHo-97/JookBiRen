@@ -24,6 +24,7 @@ import javax.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 @NoArgsConstructor
 @Getter
@@ -35,13 +36,18 @@ public class UserEp01 {
     @Column(nullable = false)
     private String code;
     @Setter
+    @ColumnDefault("0")
     private Integer score = 0;
     @Setter
+    @ColumnDefault("0")
     private Integer answerStatusCode = 0;
     @Setter
+    @ColumnDefault("0")
     private Integer answerCount = 0;
+    @ColumnDefault("0")
     private Integer solvedQuizCount = 0;
     @Setter
+    @ColumnDefault("0")
     private Integer criminal = 0;
     @Setter
     private LocalDateTime answerTime;
