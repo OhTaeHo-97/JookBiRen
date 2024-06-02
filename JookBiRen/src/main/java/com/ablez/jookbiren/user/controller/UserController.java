@@ -27,13 +27,15 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity login(@RequestBody @Valid CodeDto codeInfo, HttpServletResponse response) {
-        LoginDto loginInfo = userService.login(codeInfo);
-        response.setHeader("Authorization",
-                JwtHeaderUtilEnums.GRANT_TYPE.getValue() + loginInfo.getToken().getAccessToken().getAccessToken());
-        response.setHeader("Refresh",
-                JwtHeaderUtilEnums.GRANT_TYPE.getValue() + loginInfo.getToken().getRefreshToken().getRefreshToken());
-        return new ResponseEntity(loginInfo.getEnding(), HttpStatus.OK);
+//    public ResponseEntity login(@RequestBody @Valid CodeDto codeInfo, HttpServletResponse response) {
+    public ResponseEntity login(@RequestBody @Valid CodeDto codeInfo) {
+//        LoginDto loginInfo = userService.login(codeInfo);
+//        response.setHeader("Authorization",
+//                JwtHeaderUtilEnums.GRANT_TYPE.getValue() + loginInfo.getToken().getAccessToken().getAccessToken());
+//        response.setHeader("Refresh",
+//                JwtHeaderUtilEnums.GRANT_TYPE.getValue() + loginInfo.getToken().getRefreshToken().getRefreshToken());
+//        return new ResponseEntity(loginInfo.getEnding(), HttpStatus.OK);
+        return new ResponseEntity(userService.login(codeInfo), HttpStatus.OK);
     }
 
     @PostMapping("/reissue")
