@@ -41,10 +41,8 @@ public class UserController {
     @PostMapping("/reissue")
     public ResponseEntity reissue(@RequestHeader("Refresh") String refreshToken, HttpServletResponse response) {
         TokenDto token = userService.reissue(refreshToken);
-        response.setHeader("Authorization",
-                JwtHeaderUtilEnums.GRANT_TYPE.getValue() + token.getAccessToken().getAccessToken());
-        response.setHeader("Refresh",
-                JwtHeaderUtilEnums.GRANT_TYPE.getValue() + token.getRefreshToken().getRefreshToken());
+        response.setHeader("Authorization", token.getAccessToken());
+        response.setHeader("Refresh", token.getRefreshToken());
         return new ResponseEntity(HttpStatus.OK);
     }
 
