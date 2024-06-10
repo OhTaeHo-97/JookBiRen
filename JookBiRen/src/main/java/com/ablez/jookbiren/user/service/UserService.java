@@ -25,12 +25,15 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 @Transactional
 public class UserService {
+    private static final int CODE_LENGTH = 10;
+
     private final UserRepository userRepository;
     private final UserJpaRepository userJpaRepository;
     private final JwtTokenizer jwtTokenizer;
@@ -110,5 +113,10 @@ public class UserService {
         Authority authority = new Authority("ROLE_USER", newUser);
         newUser.addRole(authority);
         userJpaRepository.save(newUser);
+    }
+
+    // 랜덤 문자열(코드) 생성
+    private String generateCode() {
+        return RandomStringUtils.randomAlphanumeric(CODE_LENGTH);
     }
 }
