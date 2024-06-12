@@ -19,6 +19,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.Getter;
@@ -54,12 +55,17 @@ public class UserEp01 {
     private LocalDateTime answerTime;
     private LocalDateTime firstLoginTime;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Authority> authorities = new HashSet<>();
 
     @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter
     private Quiz0Ep01 quiz0s;
+
+    @OneToOne
+    @JoinColumn(name = "user_info_id")
+    private UserInfoEp01 userInfo;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Authority> authorities = new HashSet<>();
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Quiz1Ep01> quiz1s = new ArrayList<>();
