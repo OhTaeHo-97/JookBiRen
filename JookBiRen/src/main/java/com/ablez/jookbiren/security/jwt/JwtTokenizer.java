@@ -27,17 +27,17 @@ public class JwtTokenizer {
         return extractAllClaims(token).get("username", String.class);
     }
 
-    public String generateAccessToken(String code) {
-        return doGenerateToken(code, ACCESS_TOKEN_EXPIRATION_TIME.getValue());
+    public String generateAccessToken(String username) {
+        return doGenerateToken(username, ACCESS_TOKEN_EXPIRATION_TIME.getValue());
     }
 
-    public String generateRefreshToken(String code) {
-        return doGenerateToken(code, REFRESH_TOKEN_EXPIRATION_TIME.getValue());
+    public String generateRefreshToken(String username) {
+        return doGenerateToken(username, REFRESH_TOKEN_EXPIRATION_TIME.getValue());
     }
 
-    private String doGenerateToken(String code, long expireTime) {
+    private String doGenerateToken(String username, long expireTime) {
         Claims claims = Jwts.claims();
-        claims.put("username", code);
+        claims.put("username", username);
 
         return Jwts.builder()
                 .setClaims(claims)

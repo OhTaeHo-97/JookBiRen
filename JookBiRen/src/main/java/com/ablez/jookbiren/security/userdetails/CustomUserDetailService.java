@@ -17,8 +17,9 @@ public class CustomUserDetailService implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String code) throws UsernameNotFoundException {
-        UserEp01 user = userRepository.findByCode(code).orElseThrow(() -> new NoSuchElementException("없는 회원입니다."));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEp01 user = userRepository.findById(Long.parseLong(username))
+                .orElseThrow(() -> new NoSuchElementException("없는 회원입니다."));
         return CustomUserDetails.of(user);
     }
 }

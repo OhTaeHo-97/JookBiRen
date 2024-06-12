@@ -20,6 +20,14 @@ public class UserRepository {
         this.queryFactory = new JPAQueryFactory(this.em);
     }
 
+    public Optional<UserEp01> findById(long userId) {
+        UserEp01 user = queryFactory
+                .selectFrom(userEp01)
+                .where(userEp01.userId.eq(userId))
+                .fetchOne();
+        return Optional.ofNullable(user);
+    }
+
     public Optional<UserEp01> findByCode(String code) {
         UserEp01 user = queryFactory
                 .selectFrom(userEp01)

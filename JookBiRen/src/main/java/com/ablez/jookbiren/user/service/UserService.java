@@ -19,14 +19,15 @@ import com.ablez.jookbiren.user.dto.UserDto.InfoDto;
 import com.ablez.jookbiren.user.dto.UserDto.LoginDto;
 import com.ablez.jookbiren.user.dto.UserDto.StatusDto;
 import com.ablez.jookbiren.user.entity.UserEp01;
+import com.ablez.jookbiren.user.entity.UserInfoEp01;
 import com.ablez.jookbiren.user.repository.UserJpaRepository;
 import com.ablez.jookbiren.user.repository.UserRepository;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
@@ -39,14 +40,17 @@ public class UserService {
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtParseInterceptor jwtParseInterceptor;
+    private final UserInfoService userInfoService;
 
     public LoginDto login(CodeDto codeInfo) {
-        UserEp01 user = findByCode(codeInfo.getCode());
+        UserInfoEp01 userInfo = userInfoService.findByCode(codeInfo.getCode());
+        UserEp01 user = userInfo.getUser();
+
         user.updateFirstLoginTime();
 
-        String code = user.getCode();
-        String accessToken = jwtTokenizer.generateAccessToken(code);
-        RefreshToken refreshToken = saveRefreshToken(code);
+        String userId = String.valueOf(user.getUserId());
+        String accessToken = jwtTokenizer.generateAccessToken(userId);
+        RefreshToken refreshToken = saveRefreshToken(userId);
 
         return new LoginDto(new TokenDto(accessToken, refreshToken.getRefreshToken()),
                 new EndingDto(user.getAnswerTime() != null));

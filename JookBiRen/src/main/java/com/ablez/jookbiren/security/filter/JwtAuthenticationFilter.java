@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String code = null;
+        String username = null;
         String accessToken = getAccessToken(httpServletRequest);
 
         if (httpServletRequest.getRequestURI().equals("/users/reissue")
@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } else if (httpServletRequest.getRequestURI().equals("/users/reissue")
                 && getRefreshToken(httpServletRequest) != null) {
             String refreshToken = getRefreshToken(httpServletRequest);
-            code = jwtTokenizer.getUsername(refreshToken);
+            username = jwtTokenizer.getUsername(refreshToken);
         } else {
             if (accessToken != null) {
 //                if (lessThanReissueExpirationTimesLeft(accessToken)) {
@@ -46,13 +46,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 if (jwtTokenizer.isTokenExpired(accessToken)) {
                     throw new RuntimeException("토큰 만료!");
                 }
-                code = jwtTokenizer.getUsername(accessToken);
+                username = jwtTokenizer.getUsername(accessToken);
             }
         }
 
-        if (code != null) {
-            UserDetails userDetails = customUserDetailService.loadUserByUsername(code);
-            equalsUsernameFromTokenAndUserDetails(userDetails.getUsername(), code, httpServletResponse);
+        if (username != null) {
+            UserDetails userDetails = customUserDetailService.loadUserByUsername(username);
+            equalsUsernameFromTokenAndUserDetails(userDetails.getUsername(), username, httpServletResponse);
             validateAccessToken(accessToken, userDetails, httpServletResponse);
             processSecurity(httpServletRequest, userDetails);
         }
@@ -76,9 +76,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private void equalsUsernameFromTokenAndUserDetails(String userDetailsCode, String tokenCode,
+    private void equalsUsernameFromTokenAndUserDetails(String userDetailsUsername, String tokenUsername,
                                                        HttpServletResponse response) {
-        if (!userDetailsCode.equals(tokenCode)) {
+        if (!userDetailsUsername.equals(tokenUsername)) {
             response.setHeader("exceptionCode", String.valueOf(401));
             response.setHeader("exceptionMessage", "Invalid token!");
             throw new RuntimeException();
