@@ -3,8 +3,6 @@ package com.ablez.jookbiren.user.controller;
 import static com.ablez.jookbiren.user.dto.UserDto.CodeDto;
 
 import com.ablez.jookbiren.security.jwt.JwtDto.TokenDto;
-import com.ablez.jookbiren.security.utils.JwtHeaderUtilEnums;
-import com.ablez.jookbiren.user.dto.UserDto.LoginDto;
 import com.ablez.jookbiren.user.service.UserService;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -17,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RestController
@@ -59,6 +59,12 @@ public class UserController {
     @PostMapping
     public ResponseEntity register(@RequestBody @Valid CodeDto codeInfo) {
         userService.register(codeInfo);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/excel")
+    public ResponseEntity registerExcel(@RequestParam("file") MultipartFile file) {
+        userService.readExcel(file);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

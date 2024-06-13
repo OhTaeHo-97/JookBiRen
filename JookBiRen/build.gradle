@@ -74,6 +74,14 @@ dependencies {
 
     // gson
     implementation 'com.google.code.gson:gson'
+
+    // excel 다루기
+    implementation 'org.apache.poi:poi:4.1.2'
+    implementation 'org.apache.poi:poi-ooxml:4.1.2'
+    implementation 'org.apache.poi:poi-scratchpad:4.1.2'
+
+    // commons-io
+    implementation 'commons-io:commons-io:2.6'
 }
 
 dependencyManagement {
