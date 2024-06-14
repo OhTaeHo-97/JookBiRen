@@ -8,6 +8,7 @@ public enum ExceptionCode {
     INVALID_PLACE_CODE(400, "Invalid Place Code"),
     INVALID_REFRESH_TOKEN(401, "Invalid Refresh Token"),
     INVALID_USER_CODE(400, "Invalid User Code"),
+    INVALID_USER_ID(400, "Invalid User Id"),
     INVALID_TOKEN_TYPE(401, "Invalid Token Type"),
     CANNOT_PICK_SUSPECT(400, "You have to solve all star quiz first"),
     PLATFORM_NOT_FOUND(404, "Platform Not Found"),

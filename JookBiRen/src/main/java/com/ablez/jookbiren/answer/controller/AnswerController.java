@@ -25,20 +25,21 @@ public class AnswerController {
     @GetMapping
     public ResponseEntity findAnswer(String quiz) {
         return new ResponseEntity<>(answerService.findAnswer(new Quiz(quiz),
-                userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername())), HttpStatus.OK);
+                userService.findByUserId(Long.parseLong(JwtParseInterceptor.getAuthenticatedUsername()))),
+                HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity checkAnswer(@RequestBody CheckAnswerDto dto) {
-        return new ResponseEntity<>(
-                answerService.checkAnswer(dto, userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername())),
+        return new ResponseEntity<>(answerService.checkAnswer(dto,
+                userService.findByUserId(Long.parseLong(JwtParseInterceptor.getAuthenticatedUsername()))),
                 HttpStatus.OK);
     }
 
     @PostMapping("/pick")
     public ResponseEntity pickSuspect(@RequestBody SuspectDto suspectInfo) {
-        return new ResponseEntity(
-                answerService.pickSuspect(userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername()),
-                        suspectInfo), HttpStatus.OK);
+        return new ResponseEntity(answerService.pickSuspect(
+                userService.findByUserId(Long.parseLong(JwtParseInterceptor.getAuthenticatedUsername())), suspectInfo),
+                HttpStatus.OK);
     }
 }

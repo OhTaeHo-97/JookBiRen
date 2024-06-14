@@ -21,19 +21,22 @@ public class QuizController {
     @GetMapping
     public ResponseEntity getCurrentSituationAndSolvedProblems(int place) {
         return new ResponseEntity(quizService.getCurrentSituationAndSolvedProblems(place,
-                userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername())), HttpStatus.OK);
+                userService.findByUserId(Long.parseLong(JwtParseInterceptor.getAuthenticatedUsername()))),
+                HttpStatus.OK);
     }
 
     @GetMapping("/answer")
     public ResponseEntity checkAlreadySolvedQuiz(String quiz) {
         return new ResponseEntity(quizService.checkAlreadySolvedQuiz(
-                userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername()), new Quiz(quiz)), HttpStatus.OK);
+                userService.findByUserId(Long.parseLong(JwtParseInterceptor.getAuthenticatedUsername())),
+                new Quiz(quiz)), HttpStatus.OK);
     }
 
     @GetMapping("/hint")
     public ResponseEntity getHint(String quiz) {
         return new ResponseEntity(
-                quizService.findHint(userService.findByCode(JwtParseInterceptor.getAuthenticatedUsername()),
+                quizService.findHint(
+                        userService.findByUserId(Long.parseLong(JwtParseInterceptor.getAuthenticatedUsername())),
                         new Quiz(quiz)), HttpStatus.OK);
     }
 }

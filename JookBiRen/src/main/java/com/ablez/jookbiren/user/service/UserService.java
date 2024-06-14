@@ -80,8 +80,8 @@ public class UserService {
     }
 
     public InfoDto getInfo() {
-        String code = jwtParseInterceptor.getAuthenticatedUsername();
-        UserEp01 user = findByCode(code);
+//        String code = jwtParseInterceptor.getAuthenticatedUsername();
+        UserEp01 user = findByUserId(Long.parseLong(jwtParseInterceptor.getAuthenticatedUsername()));
 
         LocalDateTime firstLoginTime = user.getFirstLoginTime();
         LocalDateTime answerTime = user.getAnswerTime();
@@ -104,6 +104,11 @@ public class UserService {
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_USER_CODE));
     }
 
+    public UserEp01 findByUserId(long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_USER_ID));
+    }
+
     private String validateToken(String token) {
         if (!token.startsWith(JwtHeaderUtilEnums.GRANT_TYPE.getValue())) {
             throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN_TYPE);
@@ -116,7 +121,8 @@ public class UserService {
     }
 
     public StatusDto canPickSuspect() {
-        UserEp01 user = findByCode(jwtParseInterceptor.getAuthenticatedUsername());
+        UserEp01 user = findByUserId(Long.parseLong(jwtParseInterceptor.getAuthenticatedUsername()));
+        ;
 
         int answerStatus = user.getAnswerStatusCode();
         return new StatusDto(answerStatus == (Math.pow(2, STAR_QUIZ_COUNT) - 1));
