@@ -58,7 +58,7 @@ public class AnswerService {
         } else if (quizInfo.getPlaceCode() == 1) {
             Quiz1Ep01 quiz = quizInfoService.findByQuizNumberAndUser1(quizInfo.getQuizNumber(), user)
                     .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
-            if(quiz.getGetAnswerTime() == null) {
+            if (quiz.getGetAnswerTime() == null) {
                 quiz.setGetAnswerTime(LocalDateTime.now());
                 user.setAnswerCount(user.getAnswerCount() + 1);
             }
@@ -97,7 +97,6 @@ public class AnswerService {
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_NOT_FOUND));
         if (optionalAnswer.isPresent()) {
             updateUserAnswerStatus(quiz, user);
-            updateSolvedQuizCount(user);
             setAnswerTime(answerInfo, user);
             return new CheckAnswerResponseDto(true);
         } else {
@@ -122,28 +121,43 @@ public class AnswerService {
         if (answerInfo.getQuizInfo().getPlaceCode() == 0) {
             Quiz0Ep01 quiz = quizInfoService.findByQuizNumberAndUser0(answerInfo.getQuizInfo().getQuizNumber(), user)
                     .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
-            quiz.setFirstAnswerTime(LocalDateTime.now());
+            if (quiz.getFirstAnswerTime() == null) {
+                quiz.setFirstAnswerTime(LocalDateTime.now());
+                updateSolvedQuizCount(user);
+            }
         } else if (answerInfo.getQuizInfo().getPlaceCode() == 1) {
             Quiz1Ep01 quiz = quizInfoService.findByQuizNumberAndUser1(answerInfo.getQuizInfo().getQuizNumber(), user)
                     .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
-            quiz.setFirstAnswerTime(LocalDateTime.now());
+            if (quiz.getFirstAnswerTime() == null) {
+                quiz.setFirstAnswerTime(LocalDateTime.now());
+                updateSolvedQuizCount(user);
+            }
         } else if (answerInfo.getQuizInfo().getPlaceCode() == 2) {
             Quiz2Ep01 quiz = quizInfoService.findByQuizNumberAndUser2(answerInfo.getQuizInfo().getQuizNumber(), user)
                     .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
-            quiz.setFirstAnswerTime(LocalDateTime.now());
+            if (quiz.getFirstAnswerTime() == null) {
+                quiz.setFirstAnswerTime(LocalDateTime.now());
+                updateSolvedQuizCount(user);
+            }
         } else if (answerInfo.getQuizInfo().getPlaceCode() == 3) {
             Quiz3Ep01 quiz = quizInfoService.findByQuizNumberAndUser3(answerInfo.getQuizInfo().getQuizNumber(), user)
                     .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
-            quiz.setFirstAnswerTime(LocalDateTime.now());
+            if (quiz.getFirstAnswerTime() == null) {
+                quiz.setFirstAnswerTime(LocalDateTime.now());
+                updateSolvedQuizCount(user);
+            }
         } else if (answerInfo.getQuizInfo().getPlaceCode() == 4) {
             Quiz4Ep01 quiz = quizInfoService.findByQuizNumberAndUser4(answerInfo.getQuizInfo().getQuizNumber(), user)
                     .orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUIZ_HISTORY_NOT_FOUND));
-            quiz.setFirstAnswerTime(LocalDateTime.now());
+            if (quiz.getFirstAnswerTime() == null) {
+                quiz.setFirstAnswerTime(LocalDateTime.now());
+                updateSolvedQuizCount(user);
+            }
         }
     }
 
     public SuspectResponseDto pickSuspect(UserEp01 user, SuspectDto suspectInfo) {
-        if(user.getAnswerStatusCode() != (1 << STAR_QUIZ_COUNT) - 1) {
+        if (user.getAnswerStatusCode() != (1 << STAR_QUIZ_COUNT) - 1) {
             throw new BusinessLogicException(ExceptionCode.CANNOT_PICK_SUSPECT);
         }
 
