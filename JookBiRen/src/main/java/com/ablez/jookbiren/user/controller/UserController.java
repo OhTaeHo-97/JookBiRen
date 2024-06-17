@@ -62,9 +62,12 @@ public class UserController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @PostMapping(path = "/excel")
+    @PostMapping(path = "/register")
     public ResponseEntity registerExcel(@RequestParam("file") MultipartFile file) {
         userService.readExcel(file);
         return new ResponseEntity(HttpStatus.OK);
     }
 }
+// 40% : 5
+// 30% : 3
+// 10%(최대 2억) : 2

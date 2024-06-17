@@ -22,6 +22,7 @@ import com.ablez.jookbiren.user.entity.UserEp01;
 import com.ablez.jookbiren.user.entity.UserInfoEp01;
 import com.ablez.jookbiren.user.repository.UserJpaRepository;
 import com.ablez.jookbiren.user.repository.UserRepository;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -53,6 +55,7 @@ public class UserService {
     private final UserInfoService userInfoService;
 
     public LoginDto login(CodeDto codeInfo) {
+        System.out.println("codeInfo = " + codeInfo);
         UserInfoEp01 userInfo = userInfoService.findByCode(codeInfo.getCode());
         UserEp01 user = userInfo.getUser();
 
@@ -141,79 +144,198 @@ public class UserService {
     }
 
     public void readExcel(MultipartFile file) {
-        // 파일 Original 이름 불러오기
-        String fileExtsn = FilenameUtils.getExtension(file.getOriginalFilename());
-        System.out.println("fileExtsn = " + fileExtsn);
-
+        String fileExtension = findFileExtension(file);
         Workbook workbook = null;
         try {
-            // 엑셀 97-2003까지는 HSSF(xls), 엑셀 2007 이상은 XSSF(xlsx)
-            if (fileExtsn.equals("xls")) {
-                workbook = new HSSFWorkbook(file.getInputStream());
-            } else {
-                workbook = new XSSFWorkbook(file.getInputStream());
-            }
+            workbook = makeWorkbook(fileExtension, file);
 
             // 엑셀파일에서 첫 번째 시트 불러오기
             Sheet worksheet = workbook.getSheetAt(0);
 
-            // getPhysicalNumberOfRow : 행의 개수를 불러오는 메소드
-            for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
-                Row row = worksheet.getRow(i);
+            for (int rowIdx = 0; rowIdx < worksheet.getPhysicalNumberOfRows();
+                 rowIdx++) { // getPhysicalNumberOfRow : 행의 개수를 불러오는 메소드
+                Row row = worksheet.getRow(rowIdx);
                 SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
                 if (row != null) {
-                    for (int j = 0; j <= 9; j++) {
-                        Cell cell = row.getCell(j);
-                        String value = "";
-                        if (cell == null) {
-                            continue;
-                        } else {
-                            switch (cell.getCellType()) {
-                                case FORMULA:
-                                    value = cell.getCellFormula();
-                                    break;
-                                case NUMERIC:
-                                    if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                                        value = dateFormatter.format(cell.getDateCellValue());
-                                    } else {
-                                        double numericCellValue = cell.getNumericCellValue();
-                                        value = String.valueOf(numericCellValue);
-                                        if (numericCellValue == Math.rint(numericCellValue)) {
-                                            value = String.valueOf((int) numericCellValue);
-                                        } else {
-                                            value = String.valueOf(numericCellValue);
-                                        }
-                                    }
-                                    break;
-                                case STRING:
-                                    value = cell.getStringCellValue() + "";
-                                    break;
-                                case BLANK:
-                                    value = cell.getBooleanCellValue() + "";
-                                    break;
-                                case ERROR:
-                                    value = cell.getErrorCellValue() + "";
-                                    break;
-                                default:
-                                    value = cell.getStringCellValue();
-                                    break;
-                            }
-                        }
+//                    for (int j = 0; j <= 9; j++) {
+//                        Cell cell = row.getCell(j);
+//                        String value = "";
+//                        if (cell == null) {
+//                            continue;
+//                        } else {
+//                            switch (cell.getCellType()) {
+//                                case FORMULA:
+//                                    value = cell.getCellFormula();
+//                                    break;
+//                                case NUMERIC:
+//                                    if (HSSFDateUtil.isCellDateFormatted(cell)) {
+//                                        value = dateFormatter.format(cell.getDateCellValue());
+//                                    } else {
+//                                        double numericCellValue = cell.getNumericCellValue();
+//                                        value = String.valueOf(numericCellValue);
+//                                        if (numericCellValue == Math.rint(numericCellValue)) {
+//                                            value = String.valueOf((int) numericCellValue);
+//                                        } else {
+//                                            value = String.valueOf(numericCellValue);
+//                                        }
+//                                    }
+//                                    break;
+//                                case STRING:
+//                                    value = cell.getStringCellValue() + "";
+//                                    break;
+//                                case BLANK:
+//                                    value = cell.getBooleanCellValue() + "";
+//                                    break;
+//                                case ERROR:
+//                                    value = cell.getErrorCellValue() + "";
+//                                    break;
+//                                default:
+//                                    value = cell.getStringCellValue();
+//                                    break;
+//                            }
+//                        }
+//
+//                        System.out.println(j + ": " + value);
+//                    }
 
-                        System.out.println(j + ": " + value);
-                    }
+                    processExcelData(dateFormatter, row);
 
                     workbook.close();
                 }
             }
-
-//            // 엑셀 파일 읽기
-//            workbook = ExcelReader.readExcel(file.getInputStream(), fileExtsn);
-//            // 엑셀 파일 데이터 저장
-//            ExcelReader.saveExcelData(workbook);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    private String findFileExtension(MultipartFile file) {
+        return FilenameUtils.getExtension(file.getOriginalFilename());
+    }
+
+    private Workbook makeWorkbook(String fileExtension, MultipartFile file) throws IOException {
+        if (fileExtension.equals("xls")) {
+            return new HSSFWorkbook(file.getInputStream());
+        } else {
+            return new XSSFWorkbook(file.getInputStream());
+        }
+    }
+
+    private void processExcelData(SimpleDateFormat dateFormatter, Row row) {
+        for (int colIdx = 0; colIdx <= 9; colIdx++) {
+            Cell cell = row.getCell(colIdx);
+            String value = "";
+            if (cell == null) {
+                continue;
+            } else {
+                value = processCellData(cell, dateFormatter);
+            }
+
+            System.out.println(colIdx + ": " + value);
+        }
+    }
+
+    private String processCellData(Cell cell, SimpleDateFormat dateFormatter) {
+        if (cell.getCellType() == CellType.FORMULA) {
+            return cell.getCellFormula();
+        }
+        if (cell.getCellType() == CellType.NUMERIC) {
+            return processNumericData(cell, dateFormatter);
+        }
+        if (cell.getCellType() == CellType.STRING || cell.getCellType() == CellType.BLANK
+                || cell.getCellType() == CellType.ERROR) {
+            return cell.getStringCellValue() + "";
+        }
+        return cell.getStringCellValue();
+    }
+
+    private String processNumericData(Cell cell, SimpleDateFormat dateFormatter) {
+        if (HSSFDateUtil.isCellDateFormatted(cell)) {
+            return dateFormatter.format(cell.getDateCellValue());
+        } else {
+            double numericCellValue = cell.getNumericCellValue();
+            if (numericCellValue == Math.rint(numericCellValue)) {
+                return String.valueOf((int) numericCellValue);
+            } else {
+                return String.valueOf(numericCellValue);
+            }
+        }
+    }
+
+//    public void readExcel(MultipartFile file) {
+//        // 파일 Original 이름 불러오기
+//        String fileExtsn = FilenameUtils.getExtension(file.getOriginalFilename());
+//        System.out.println("fileExtsn = " + fileExtsn);
+//
+//        Workbook workbook = null;
+//        try {
+//            // 엑셀 97-2003까지는 HSSF(xls), 엑셀 2007 이상은 XSSF(xlsx)
+//            if (fileExtsn.equals("xls")) {
+//                workbook = new HSSFWorkbook(file.getInputStream());
+//            } else {
+//                workbook = new XSSFWorkbook(file.getInputStream());
+//            }
+//
+//            // 엑셀파일에서 첫 번째 시트 불러오기
+//            Sheet worksheet = workbook.getSheetAt(0);
+//
+//            // getPhysicalNumberOfRow : 행의 개수를 불러오는 메소드
+//            for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
+//                Row row = worksheet.getRow(i);
+//                SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+//
+//                if (row != null) {
+//                    for (int j = 0; j <= 9; j++) {
+//                        Cell cell = row.getCell(j);
+//                        String value = "";
+//                        if (cell == null) {
+//                            continue;
+//                        } else {
+//                            switch (cell.getCellType()) {
+//                                case FORMULA:
+//                                    value = cell.getCellFormula();
+//                                    break;
+//                                case NUMERIC:
+//                                    if (HSSFDateUtil.isCellDateFormatted(cell)) {
+//                                        value = dateFormatter.format(cell.getDateCellValue());
+//                                    } else {
+//                                        double numericCellValue = cell.getNumericCellValue();
+//                                        value = String.valueOf(numericCellValue);
+//                                        if (numericCellValue == Math.rint(numericCellValue)) {
+//                                            value = String.valueOf((int) numericCellValue);
+//                                        } else {
+//                                            value = String.valueOf(numericCellValue);
+//                                        }
+//                                    }
+//                                    break;
+//                                case STRING:
+//                                    value = cell.getStringCellValue() + "";
+//                                    break;
+//                                case BLANK:
+//                                    value = cell.getBooleanCellValue() + "";
+//                                    break;
+//                                case ERROR:
+//                                    value = cell.getErrorCellValue() + "";
+//                                    break;
+//                                default:
+//                                    value = cell.getStringCellValue();
+//                                    break;
+//                            }
+//                        }
+//
+//                        System.out.println(j + ": " + value);
+//                    }
+//
+//                    workbook.close();
+//                }
+//            }
+//
+////            // 엑셀 파일 읽기
+////            workbook = ExcelReader.readExcel(file.getInputStream(), fileExtsn);
+////            // 엑셀 파일 데이터 저장
+////            ExcelReader.saveExcelData(workbook);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
