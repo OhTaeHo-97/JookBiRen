@@ -1,6 +1,6 @@
 package com.ablez.jookbiren.user.entity;
 
-import com.ablez.jookbiren.buyer.entity.BuyerInfoEp01;
+import com.ablez.jookbiren.buyer.entity.BuyerInfo;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
@@ -23,8 +24,14 @@ public class UserInfoEp01 {
     private String code;
 
     @OneToOne(mappedBy = "userInfo", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Setter
     private UserEp01 user;
     @ManyToOne
     @JoinColumn(name = "buyer_id")
-    private BuyerInfoEp01 buyerInfoEp01;
+    @Setter
+    private BuyerInfo buyerInfo;
+
+    public UserInfoEp01(String code) {
+        this.code = code;
+    }
 }

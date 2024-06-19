@@ -55,13 +55,13 @@ public class UserEp01 {
     private LocalDateTime answerTime;
     private LocalDateTime firstLoginTime;
 
-
     @OneToOne(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     @Setter
     private Quiz0Ep01 quiz0s;
 
     @OneToOne
     @JoinColumn(name = "user_info_id")
+    @Setter
     private UserInfoEp01 userInfo;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)

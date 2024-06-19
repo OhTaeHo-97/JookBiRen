@@ -5,8 +5,11 @@ import static com.ablez.jookbiren.security.jwt.JwtDto.TokenDto;
 import static com.ablez.jookbiren.security.utils.JwtExpirationEnums.REFRESH_TOKEN_EXPIRATION_TIME;
 import static com.ablez.jookbiren.utils.JookBiRenConstant.STAR_QUIZ_COUNT;
 
+import com.ablez.jookbiren.buyer.dto.BuyerInfoDto.PostBuyerInfoDto;
+import com.ablez.jookbiren.buyer.service.BuyerInfoService;
 import com.ablez.jookbiren.exception.BusinessLogicException;
 import com.ablez.jookbiren.exception.ExceptionCode;
+import com.ablez.jookbiren.order.dto.OrderInfoDto.PostOrderInfoDto;
 import com.ablez.jookbiren.security.entity.Authority;
 import com.ablez.jookbiren.security.interceptor.JwtParseInterceptor;
 import com.ablez.jookbiren.security.jwt.JwtTokenizer;
@@ -26,6 +29,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -46,6 +52,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class UserService {
     private static final int CODE_LENGTH = 10;
+    private static final int EXCEL_COLUMN_LENGTH = 9;
 
     private final UserRepository userRepository;
     private final UserJpaRepository userJpaRepository;
@@ -53,6 +60,7 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtParseInterceptor jwtParseInterceptor;
     private final UserInfoService userInfoService;
+    private final BuyerInfoService buyerInfoService;
 
     public LoginDto login(CodeDto codeInfo) {
         System.out.println("codeInfo = " + codeInfo);
@@ -143,6 +151,11 @@ public class UserService {
         return RandomStringUtils.randomAlphanumeric(CODE_LENGTH);
     }
 
+    public void generateBuyerAndOrderInfo(MultipartFile file) {
+        // 연락처 실명 플랫폼 주문번호 닉네임 주소 구매가격 구매날짜 생성할코드수
+        readExcel(file);
+    }
+
     public void readExcel(MultipartFile file) {
         String fileExtension = findFileExtension(file);
         Workbook workbook = null;
@@ -152,58 +165,34 @@ public class UserService {
             // 엑셀파일에서 첫 번째 시트 불러오기
             Sheet worksheet = workbook.getSheetAt(0);
 
+            // 각 행 읽어 처리
             for (int rowIdx = 0; rowIdx < worksheet.getPhysicalNumberOfRows();
                  rowIdx++) { // getPhysicalNumberOfRow : 행의 개수를 불러오는 메소드
                 Row row = worksheet.getRow(rowIdx);
                 SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
                 if (row != null) {
-//                    for (int j = 0; j <= 9; j++) {
-//                        Cell cell = row.getCell(j);
-//                        String value = "";
-//                        if (cell == null) {
-//                            continue;
-//                        } else {
-//                            switch (cell.getCellType()) {
-//                                case FORMULA:
-//                                    value = cell.getCellFormula();
-//                                    break;
-//                                case NUMERIC:
-//                                    if (HSSFDateUtil.isCellDateFormatted(cell)) {
-//                                        value = dateFormatter.format(cell.getDateCellValue());
-//                                    } else {
-//                                        double numericCellValue = cell.getNumericCellValue();
-//                                        value = String.valueOf(numericCellValue);
-//                                        if (numericCellValue == Math.rint(numericCellValue)) {
-//                                            value = String.valueOf((int) numericCellValue);
-//                                        } else {
-//                                            value = String.valueOf(numericCellValue);
-//                                        }
-//                                    }
-//                                    break;
-//                                case STRING:
-//                                    value = cell.getStringCellValue() + "";
-//                                    break;
-//                                case BLANK:
-//                                    value = cell.getBooleanCellValue() + "";
-//                                    break;
-//                                case ERROR:
-//                                    value = cell.getErrorCellValue() + "";
-//                                    break;
-//                                default:
-//                                    value = cell.getStringCellValue();
-//                                    break;
-//                            }
-//                        }
-//
-//                        System.out.println(j + ": " + value);
-//                    }
-
-                    processExcelData(dateFormatter, row);
-
-                    workbook.close();
+                    List<String> infos = processExcelData(dateFormatter, row);
+                    PostBuyerInfoDto buyerInfo = PostBuyerInfoDto.builder()
+                            .phone(infos.get(0))
+                            .name(infos.get(1))
+                            .platform(infos.get(2))
+                            .nickname(infos.get(4))
+                            .address(infos.get(5))
+                            .build();
+                    System.out.println("date: " + infos.get(7));
+                    PostOrderInfoDto orderInfo = PostOrderInfoDto.builder()
+                            .orderNumber(infos.get(3))
+                            .amount(Integer.parseInt(infos.get(6)))
+                            .platform(infos.get(2))
+                            .createdAt(LocalDateTime.parse(infos.get(7),
+                                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                            .build();
+                    buyerInfoService.insertBuyerInfo(Integer.parseInt(infos.get(8)), buyerInfo, orderInfo);
                 }
             }
+
+            workbook.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -221,18 +210,29 @@ public class UserService {
         }
     }
 
-    private void processExcelData(SimpleDateFormat dateFormatter, Row row) {
-        for (int colIdx = 0; colIdx <= 9; colIdx++) {
+    private List<String> processExcelData(SimpleDateFormat dateFormatter, Row row) {
+        // 각 열의 데이터를 저장할 리스트
+        List<String> infos = new ArrayList<>();
+        // 각 열의 데이터를 읽기(연락처 실명 플랫폼 주문번호 닉네임 주소 구매가격 구매날짜 생성할코드수)
+        for (int colIdx = 0; colIdx < EXCEL_COLUMN_LENGTH; colIdx++) {
             Cell cell = row.getCell(colIdx);
             String value = "";
             if (cell == null) {
                 continue;
             } else {
-                value = processCellData(cell, dateFormatter);
+//                value = processCellData(cell, dateFormatter);
+                infos.add(processCellData(cell, dateFormatter));
             }
 
-            System.out.println(colIdx + ": " + value);
+            // 연락처 실명 플랫폼 주문번호 닉네임 주소 구매가격 구매날짜 생성할코드수
+            // BuyerInfo -> 연락처, 실명, 플랫폼, 닉네임, 주소
+            // OrderInfo -> 주문번호, 구매가격, 플랫폼, 구매날짜
+            // UserInfoEp01 -> 생성할 코드 수 -> UserEp01에도 추가
+
+//            System.out.println(colIdx + ": " + value);
         }
+
+        return infos;
     }
 
     private String processCellData(Cell cell, SimpleDateFormat dateFormatter) {
@@ -262,80 +262,7 @@ public class UserService {
         }
     }
 
-//    public void readExcel(MultipartFile file) {
-//        // 파일 Original 이름 불러오기
-//        String fileExtsn = FilenameUtils.getExtension(file.getOriginalFilename());
-//        System.out.println("fileExtsn = " + fileExtsn);
-//
-//        Workbook workbook = null;
-//        try {
-//            // 엑셀 97-2003까지는 HSSF(xls), 엑셀 2007 이상은 XSSF(xlsx)
-//            if (fileExtsn.equals("xls")) {
-//                workbook = new HSSFWorkbook(file.getInputStream());
-//            } else {
-//                workbook = new XSSFWorkbook(file.getInputStream());
-//            }
-//
-//            // 엑셀파일에서 첫 번째 시트 불러오기
-//            Sheet worksheet = workbook.getSheetAt(0);
-//
-//            // getPhysicalNumberOfRow : 행의 개수를 불러오는 메소드
-//            for (int i = 1; i < worksheet.getPhysicalNumberOfRows(); i++) {
-//                Row row = worksheet.getRow(i);
-//                SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-//
-//                if (row != null) {
-//                    for (int j = 0; j <= 9; j++) {
-//                        Cell cell = row.getCell(j);
-//                        String value = "";
-//                        if (cell == null) {
-//                            continue;
-//                        } else {
-//                            switch (cell.getCellType()) {
-//                                case FORMULA:
-//                                    value = cell.getCellFormula();
-//                                    break;
-//                                case NUMERIC:
-//                                    if (HSSFDateUtil.isCellDateFormatted(cell)) {
-//                                        value = dateFormatter.format(cell.getDateCellValue());
-//                                    } else {
-//                                        double numericCellValue = cell.getNumericCellValue();
-//                                        value = String.valueOf(numericCellValue);
-//                                        if (numericCellValue == Math.rint(numericCellValue)) {
-//                                            value = String.valueOf((int) numericCellValue);
-//                                        } else {
-//                                            value = String.valueOf(numericCellValue);
-//                                        }
-//                                    }
-//                                    break;
-//                                case STRING:
-//                                    value = cell.getStringCellValue() + "";
-//                                    break;
-//                                case BLANK:
-//                                    value = cell.getBooleanCellValue() + "";
-//                                    break;
-//                                case ERROR:
-//                                    value = cell.getErrorCellValue() + "";
-//                                    break;
-//                                default:
-//                                    value = cell.getStringCellValue();
-//                                    break;
-//                            }
-//                        }
-//
-//                        System.out.println(j + ": " + value);
-//                    }
-//
-//                    workbook.close();
-//                }
-//            }
-//
-////            // 엑셀 파일 읽기
-////            workbook = ExcelReader.readExcel(file.getInputStream(), fileExtsn);
-////            // 엑셀 파일 데이터 저장
-////            ExcelReader.saveExcelData(workbook);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public UserEp01 makeUser(String code) {
+        return new UserEp01(code);
+    }
 }
