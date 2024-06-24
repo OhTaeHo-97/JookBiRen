@@ -6,7 +6,7 @@ import com.ablez.jookbiren.quiz.entity.Quiz2Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz3Ep01;
 import com.ablez.jookbiren.quiz.entity.Quiz4Ep01;
 import com.ablez.jookbiren.quiz.entity.WrongAnswerEp01;
-import com.ablez.jookbiren.security.entity.Authority;
+import com.ablez.jookbiren.security.entity.AuthorityEp01;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -65,7 +65,7 @@ public class UserEp01 {
     private UserInfoEp01 userInfo;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Authority> authorities = new HashSet<>();
+    private Set<AuthorityEp01> authorities = new HashSet<>();
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Quiz1Ep01> quiz1s = new ArrayList<>();
@@ -98,11 +98,11 @@ public class UserEp01 {
     }
 
     public List<String> getRoles() {
-        return authorities.stream().map(Authority::getRole).collect(Collectors.toList());
+        return authorities.stream().map(AuthorityEp01::getRole).collect(Collectors.toList());
     }
 
-    public void addRole(Authority authority) {
-        this.authorities.add(authority);
+    public void addRole(AuthorityEp01 authorityEp01) {
+        this.authorities.add(authorityEp01);
     }
 
     public void addQuiz1(Quiz1Ep01 quiz1Ep01) {
