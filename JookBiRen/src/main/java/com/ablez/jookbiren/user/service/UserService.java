@@ -6,11 +6,14 @@ import static com.ablez.jookbiren.security.utils.JwtExpirationEnums.REFRESH_TOKE
 import static com.ablez.jookbiren.utils.JookBiRenConstant.STAR_QUIZ_COUNT;
 
 import com.ablez.jookbiren.buyer.dto.BuyerInfoDto.PostBuyerInfoDto;
+import com.ablez.jookbiren.buyer.entity.BuyerInfo;
 import com.ablez.jookbiren.buyer.service.BuyerInfoService;
 import com.ablez.jookbiren.exception.BusinessLogicException;
 import com.ablez.jookbiren.exception.ExceptionCode;
 import com.ablez.jookbiren.order.dto.OrderInfoDto.PostOrderInfoDto;
-import com.ablez.jookbiren.security.entity.Authority;
+import com.ablez.jookbiren.order.service.OrderInfoService;
+import com.ablez.jookbiren.order.utils.Platform;
+import com.ablez.jookbiren.security.entity.AuthorityEp01;
 import com.ablez.jookbiren.security.interceptor.JwtParseInterceptor;
 import com.ablez.jookbiren.security.jwt.JwtTokenizer;
 import com.ablez.jookbiren.security.redis.repository.RefreshTokenRepository;
@@ -32,6 +35,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -61,9 +65,9 @@ public class UserService {
     private final JwtParseInterceptor jwtParseInterceptor;
     private final UserInfoService userInfoService;
     private final BuyerInfoService buyerInfoService;
+    private final OrderInfoService orderInfoService;
 
     public LoginDto login(CodeDto codeInfo) {
-        System.out.println("codeInfo = " + codeInfo);
         UserInfoEp01 userInfo = userInfoService.findByCode(codeInfo.getCode());
         UserEp01 user = userInfo.getUser();
 
@@ -141,8 +145,8 @@ public class UserService {
 
     public void register(CodeDto codeInfo) {
         UserEp01 newUser = new UserEp01(codeInfo.getCode());
-        Authority authority = new Authority("ROLE_USER", newUser);
-        newUser.addRole(authority);
+        AuthorityEp01 authorityEp01 = new AuthorityEp01("ROLE_USER", newUser);
+        newUser.addRole(authorityEp01);
         userJpaRepository.save(newUser);
     }
 
@@ -154,6 +158,7 @@ public class UserService {
     public void generateBuyerAndOrderInfo(MultipartFile file) {
         // 연락처 실명 플랫폼 주문번호 닉네임 주소 구매가격 구매날짜 생성할코드수
         readExcel(file);
+        /// Todo: 이미 있는 구매자가 들어왔을 때 구매자 정보 업데이트
     }
 
     public void readExcel(MultipartFile file) {
@@ -169,26 +174,55 @@ public class UserService {
             for (int rowIdx = 0; rowIdx < worksheet.getPhysicalNumberOfRows();
                  rowIdx++) { // getPhysicalNumberOfRow : 행의 개수를 불러오는 메소드
                 Row row = worksheet.getRow(rowIdx);
-                SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 if (row != null) {
                     List<String> infos = processExcelData(dateFormatter, row);
-                    PostBuyerInfoDto buyerInfo = PostBuyerInfoDto.builder()
-                            .phone(infos.get(0))
-                            .name(infos.get(1))
-                            .platform(infos.get(2))
-                            .nickname(infos.get(4))
-                            .address(infos.get(5))
-                            .build();
-                    System.out.println("date: " + infos.get(7));
-                    PostOrderInfoDto orderInfo = PostOrderInfoDto.builder()
-                            .orderNumber(infos.get(3))
-                            .amount(Integer.parseInt(infos.get(6)))
-                            .platform(infos.get(2))
-                            .createdAt(LocalDateTime.parse(infos.get(7),
-                                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                            .build();
-                    buyerInfoService.insertBuyerInfo(Integer.parseInt(infos.get(8)), buyerInfo, orderInfo);
+
+                    // 1. 연락처를 통해 동일한 구매자가 있는지 확인
+                    Optional<BuyerInfo> optionalBuyerInfo = buyerInfoService.findByPhone(infos.get(0));
+                    // 2. 동일한 연락처의 구매자가 있다면 그 사람의 데이터만 업데이트
+                    if (optionalBuyerInfo.isPresent()) {
+                        // 구매자 정보 변경
+//                        BuyerInfo buyerInfo = optionalBuyerInfo.get();
+//                        buyerInfo.setName(infos.get(1));
+//                        Platform platform = Platform.findPlatform(infos.get(2));
+//                        if (platform == Platform.NAVER) {
+//                            buyerInfo.setNaverNickname(infos.get(4));
+//                        } else if (platform == Platform.TUMBLBUG) {
+//                            buyerInfo.setTumblbugNickname(infos.get(4));
+//                        }
+//                        buyerInfo.setAddress(infos.get(5));
+//
+//                        PostOrderInfoDto orderInfo = PostOrderInfoDto.builder()
+//                                .orderNumber(infos.get(3))
+//                                .amount(Integer.parseInt(infos.get(6)))
+//                                .platform(infos.get(2))
+//                                .createdAt(LocalDateTime.parse(infos.get(7),
+//                                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+//                                .build();
+//
+//                        orderInfoService.insertOrderInfo(orderInfo, buyerInfo);
+                        updateBuyerInfo(optionalBuyerInfo.get(), infos);
+                    } else {// 3. 동일한 연락처의 구매자가 없다면 새로 추가
+//                        PostBuyerInfoDto buyerInfo = PostBuyerInfoDto.builder()
+//                                .phone(infos.get(0))
+//                                .name(infos.get(1))
+//                                .platform(infos.get(2))
+//                                .nickname(infos.get(4))
+//                                .address(infos.get(5))
+//                                .build();
+//                        System.out.println("date: " + infos.get(7));
+//                        PostOrderInfoDto orderInfo = PostOrderInfoDto.builder()
+//                                .orderNumber(infos.get(3))
+//                                .amount(Integer.parseInt(infos.get(6)))
+//                                .platform(infos.get(2))
+//                                .createdAt(LocalDateTime.parse(infos.get(7),
+//                                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+//                                .build();
+//                        buyerInfoService.insertBuyerInfo(Integer.parseInt(infos.get(8)), buyerInfo, orderInfo);
+                        insertNewBuyer(infos);
+                    }
                 }
             }
 
@@ -196,6 +230,46 @@ public class UserService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void insertNewBuyer(List<String> infos) {
+        PostBuyerInfoDto buyerInfo = PostBuyerInfoDto.builder()
+                .phone(infos.get(0))
+                .name(infos.get(1))
+                .platform(infos.get(2))
+                .nickname(infos.get(4))
+                .address(infos.get(5))
+                .build();
+//        System.out.println("date: " + infos.get(7));
+        PostOrderInfoDto orderInfo = PostOrderInfoDto.builder()
+                .orderNumber(infos.get(3))
+                .amount(Integer.parseInt(infos.get(6)))
+                .platform(infos.get(2))
+                .createdAt(LocalDateTime.parse(infos.get(7),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .build();
+        buyerInfoService.insertBuyerInfo(Integer.parseInt(infos.get(8)), buyerInfo, orderInfo);
+    }
+
+    private void updateBuyerInfo(BuyerInfo buyerInfo, List<String> infos) {
+        buyerInfo.setName(infos.get(1));
+        Platform platform = Platform.findPlatform(infos.get(2));
+        if (platform == Platform.NAVER) {
+            buyerInfo.setNaverNickname(infos.get(4));
+        } else if (platform == Platform.TUMBLBUG) {
+            buyerInfo.setTumblbugNickname(infos.get(4));
+        }
+        buyerInfo.setAddress(infos.get(5));
+
+        PostOrderInfoDto orderInfo = PostOrderInfoDto.builder()
+                .orderNumber(infos.get(3))
+                .amount(Integer.parseInt(infos.get(6)))
+                .platform(infos.get(2))
+                .createdAt(LocalDateTime.parse(infos.get(7),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .build();
+
+        orderInfoService.insertOrderInfo(orderInfo, buyerInfo);
     }
 
     private String findFileExtension(MultipartFile file) {
@@ -216,7 +290,6 @@ public class UserService {
         // 각 열의 데이터를 읽기(연락처 실명 플랫폼 주문번호 닉네임 주소 구매가격 구매날짜 생성할코드수)
         for (int colIdx = 0; colIdx < EXCEL_COLUMN_LENGTH; colIdx++) {
             Cell cell = row.getCell(colIdx);
-            String value = "";
             if (cell == null) {
                 continue;
             } else {

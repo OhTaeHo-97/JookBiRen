@@ -41,8 +41,22 @@ public class OrderInfo {
         this.createdAt = createdAt;
     }
 
+    public OrderInfo(String orderNumber, Platform platform, Integer amount, LocalDateTime createdAt,
+                     BuyerInfo buyerInfo) {
+        this.orderNumber = orderNumber;
+        this.platform = platform;
+        this.amount = amount;
+        this.createdAt = createdAt;
+        this.buyerInfo = buyerInfo;
+    }
+
     public static OrderInfo postOrderInfoDtoToOrderInfo(PostOrderInfoDto orderInfoDto) {
         return new OrderInfo(orderInfoDto.getOrderNumber(), Platform.findPlatform(orderInfoDto.getPlatform()),
                 orderInfoDto.getAmount(), orderInfoDto.getCreatedAt());
+    }
+
+    public static OrderInfo postOrderInfoDtoToOrderInfo(PostOrderInfoDto orderInfoDto, BuyerInfo buyerInfo) {
+        return new OrderInfo(orderInfoDto.getOrderNumber(), Platform.findPlatform(orderInfoDto.getPlatform()),
+                orderInfoDto.getAmount(), orderInfoDto.getCreatedAt(), buyerInfo);
     }
 }

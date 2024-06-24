@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
@@ -24,9 +25,13 @@ public class BuyerInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long buyerId;
     private String phone;
+    @Setter
     private String name;
+    @Setter
     private String naverNickname;
+    @Setter
     private String tumblbugNickname;
+    @Setter
     private String address;
 
     @OneToMany(mappedBy = "buyerInfo", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -60,6 +65,5 @@ public class BuyerInfo {
     public void addUserInfo(UserInfoEp01 userInfo) {
         this.userInfos.add(userInfo);
         userInfo.setBuyerInfo(this);
-
     }
 }
