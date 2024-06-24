@@ -20,7 +20,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Getter
 @Builder
 @Entity
-public class Authority implements GrantedAuthority {
+public class AuthorityEp01 implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long authorityId;
@@ -30,7 +30,7 @@ public class Authority implements GrantedAuthority {
     @JoinColumn(name = "USER_ID")
     private UserEp01 user;
 
-    public Authority(String role, UserEp01 user) {
+    public AuthorityEp01(String role, UserEp01 user) {
         this.role = role;
         this.user = user;
     }
