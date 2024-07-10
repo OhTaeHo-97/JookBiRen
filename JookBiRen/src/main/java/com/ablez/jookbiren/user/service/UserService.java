@@ -102,7 +102,7 @@ public class UserService {
         LocalDateTime answerTime = user.getAnswerTime();
         Duration duration = Duration.between(firstLoginTime, answerTime);
 
-        return new InfoDto(user.getScore(), duration.toMinutes(), user.getAnswerCount(), user.getSolvedQuizCount(),
+        return new InfoDto(user.getScore(), duration.toSeconds(), user.getAnswerCount(), user.getSolvedQuizCount(),
                 SUSPECT.get(user.getCriminal()));
     }
 
