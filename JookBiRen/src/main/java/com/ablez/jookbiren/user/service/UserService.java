@@ -155,6 +155,7 @@ public class UserService {
     }
 
     public UserEp01 findCurrentUser(String accessToken) {
+        accessToken = accessToken.substring(7);
         UserEp01 user = userRepository.findById(Long.parseLong(JwtParseInterceptor.getAuthenticatedUsername()))
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_USER_ID));
 
