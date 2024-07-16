@@ -53,12 +53,14 @@ public class UserController {
     }
 
     @GetMapping("/status")
-    public ResponseEntity canPickSuspect() {
+    public ResponseEntity canPickSuspect(@RequestHeader("Authorization") String accessToken) {
+        userService.findCurrentUser(accessToken);
         return new ResponseEntity(userService.canPickSuspect(), HttpStatus.OK);
     }
 
     @GetMapping("/info")
-    public ResponseEntity getUserInfo() {
+    public ResponseEntity getUserInfo(@RequestHeader("Authorization") String accessToken) {
+        userService.findCurrentUser(accessToken);
         return new ResponseEntity(userService.getInfo(), HttpStatus.OK);
     }
 

@@ -154,6 +154,16 @@ public class UserService {
         return new TokenDto(jwtTokenizer.generateAccessToken(username), saveRefreshToken(username).getRefreshToken());
     }
 
+    public UserEp01 findCurrentUser(String accessToken) {
+        UserEp01 user = userRepository.findById(Long.parseLong(JwtParseInterceptor.getAuthenticatedUsername()))
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_USER_ID));
+
+        if (!user.getAccessToken().equals(accessToken)) {
+            throw new BusinessLogicException(ExceptionCode.DUPLICATED_LOGIN_USER);
+        }
+        return user;
+    }
+
     public StatusDto canPickSuspect() {
         UserEp01 user = findByUserId(Long.parseLong(jwtParseInterceptor.getAuthenticatedUsername()));
         ;
