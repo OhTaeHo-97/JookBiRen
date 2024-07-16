@@ -52,6 +52,8 @@ public class UserEp01 {
     @ColumnDefault("0")
     private Integer criminal = 0;
     @Setter
+    private String accessToken;
+    @Setter
     private LocalDateTime answerTime;
     private LocalDateTime firstLoginTime;
 
