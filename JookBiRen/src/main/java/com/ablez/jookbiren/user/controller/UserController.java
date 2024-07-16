@@ -46,6 +46,12 @@ public class UserController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity logout(@RequestHeader("Authorization") String accessToken) {
+        userService.logout(accessToken);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     @GetMapping("/status")
     public ResponseEntity canPickSuspect() {
         return new ResponseEntity(userService.canPickSuspect(), HttpStatus.OK);

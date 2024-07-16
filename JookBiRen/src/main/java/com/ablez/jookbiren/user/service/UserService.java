@@ -16,7 +16,10 @@ import com.ablez.jookbiren.order.utils.Platform;
 import com.ablez.jookbiren.security.entity.AuthorityEp01;
 import com.ablez.jookbiren.security.interceptor.JwtParseInterceptor;
 import com.ablez.jookbiren.security.jwt.JwtTokenizer;
+import com.ablez.jookbiren.security.redis.CacheKey;
+import com.ablez.jookbiren.security.redis.repository.LogoutAccessTokenRepository;
 import com.ablez.jookbiren.security.redis.repository.RefreshTokenRepository;
+import com.ablez.jookbiren.security.redis.token.LogoutAccessToken;
 import com.ablez.jookbiren.security.redis.token.RefreshToken;
 import com.ablez.jookbiren.security.utils.JwtHeaderUtilEnums;
 import com.ablez.jookbiren.user.dto.UserDto.CodeDto;
@@ -47,6 +50,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -66,6 +70,7 @@ public class UserService {
     private final UserInfoService userInfoService;
     private final BuyerInfoService buyerInfoService;
     private final OrderInfoService orderInfoService;
+    private final LogoutAccessTokenRepository logoutAccessTokenRepository;
 
     public LoginDto login(CodeDto codeInfo) {
         UserInfoEp01 userInfo = userInfoService.findByCode(codeInfo.getCode());
@@ -77,8 +82,22 @@ public class UserService {
         String accessToken = jwtTokenizer.generateAccessToken(userId);
         RefreshToken refreshToken = saveRefreshToken(userId);
 
+        user.setAccessToken(accessToken);
+
         return new LoginDto(new TokenDto(accessToken, refreshToken.getRefreshToken()),
                 new EndingDto(user.getAnswerTime() != null));
+    }
+
+    @CacheEvict(value = CacheKey.USER, key = "#username")
+    public void logout(String accessToken) {
+        UserEp01 user = userRepository.findById(Long.parseLong(JwtParseInterceptor.getAuthenticatedUsername()))
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.INVALID_USER_ID));
+
+        long remainMilliSeconds = jwtTokenizer.getRemainMilliSeconds(accessToken);
+        user.setAccessToken(null);
+        refreshTokenRepository.deleteById(String.valueOf(JwtParseInterceptor.getAuthenticatedUsername()));
+        logoutAccessTokenRepository.save(
+                LogoutAccessToken.of(accessToken, String.valueOf(user.getUserId()), remainMilliSeconds));
     }
 
     public TokenDto reissue(String refreshToken) {
