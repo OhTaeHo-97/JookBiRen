@@ -36,6 +36,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 && getRefreshToken(httpServletRequest) != null) {
             String refreshToken = getRefreshToken(httpServletRequest);
             username = jwtTokenizer.getUsername(refreshToken);
+            filterChain.doFilter(httpServletRequest, httpServletResponse);
+            return;
         } else {
             if (accessToken != null) {
 //                if (lessThanReissueExpirationTimesLeft(accessToken)) {
