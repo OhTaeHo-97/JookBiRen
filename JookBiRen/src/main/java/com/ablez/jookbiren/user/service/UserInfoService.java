@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class UserInfoService {
-    private static final int CODE_LENGTH = 10;
+    private static final int CODE_LENGTH = 6;
 
     private final UserInfoRepository userInfoRepository;
     private final UserInfoJpaRepository userInfoJpaRepository;
@@ -53,6 +53,11 @@ public class UserInfoService {
 
     // 랜덤 문자열(코드) 생성
     private String generateCode() {
-        return RandomStringUtils.randomAlphanumeric(CODE_LENGTH);
+        String code = "EP1" + RandomStringUtils.randomAlphanumeric(CODE_LENGTH).toUpperCase();
+        while (userInfoRepository.findByCode(code).isPresent()) {
+            code = "EP1" + RandomStringUtils.randomAlphanumeric(CODE_LENGTH).toUpperCase();
+        }
+
+        return code;
     }
 }
