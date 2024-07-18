@@ -13,7 +13,7 @@ public enum ExceptionCode {
     CANNOT_PICK_SUSPECT(400, "You have to solve all star quiz first"),
     PLATFORM_NOT_FOUND(404, "Platform Not Found"),
     USER_INFO_NOT_FOUND(404, "User Info Not Found"),
-    DUPLICATED_LOGIN_USER(400, "Duplicated User Login");
+    DUPLICATED_LOGIN_USER(451, "Duplicated User Login");
 
     @Getter
     private int status;
