@@ -41,6 +41,17 @@ public class BuyerInfoService {
         return buyerInfoJpaRepository.save(buyerInfo);
     }
 
+    public void insertBuyerInfoToExistedBuyer(int codeCount, PostOrderInfoDto orderInfoDto, BuyerInfo buyerInfo) {
+        orderInfoService.insertOrderInfo(orderInfoDto, buyerInfo);
+        for (int count = 0; count < codeCount; count++) {
+            UserInfoEp01 userInfo = userInfoService.makeUserInfo();
+            UserEp01 user = new UserEp01(userInfo.getCode());
+            userInfo.setUser(user);
+            user.setUserInfo(userInfo);
+            buyerInfo.addUserInfo(userInfo);
+        }
+    }
+
     // 핸드폰 번호를 통해 구매자 정보 찾기
     public Optional<BuyerInfo> findByPhone(String phone) {
         // 같이 얘기해봐야 할 것

@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -59,7 +58,6 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional
 public class UserService {
-    private static final int CODE_LENGTH = 10;
     private static final int EXCEL_COLUMN_LENGTH = 9;
 
     private final UserRepository userRepository;
@@ -180,11 +178,6 @@ public class UserService {
         userJpaRepository.save(newUser);
     }
 
-    // 랜덤 문자열(코드) 생성
-    private String generateCode() {
-        return RandomStringUtils.randomAlphanumeric(CODE_LENGTH);
-    }
-
     public void generateBuyerAndOrderInfo(MultipartFile file) {
         // 연락처 실명 플랫폼 주문번호 닉네임 주소 구매가격 구매날짜 생성할코드수
         readExcel(file);
@@ -299,7 +292,7 @@ public class UserService {
                         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .build();
 
-        orderInfoService.insertOrderInfo(orderInfo, buyerInfo);
+        buyerInfoService.insertBuyerInfoToExistedBuyer(Integer.parseInt(infos.get(8)), orderInfo, buyerInfo);
     }
 
     private String findFileExtension(MultipartFile file) {
