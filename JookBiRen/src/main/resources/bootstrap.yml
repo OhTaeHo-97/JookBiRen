@@ -1,0 +1,7 @@
+aws:
+  paramstore:
+    enabled: true
+    prefix: /episode1
+    name: jookbiren
+    profileSeparator: _
+    region: ap-northeast-2

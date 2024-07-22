@@ -1,0 +1,21 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto11
+  build:
+    commands:
+      - echo Build Starting on `date`
+      - cd JookBiRen
+      - chmod +x ./gradlew
+      - ./gradlew build
+  post_build:
+    commands:
+      - echo $(basename ./JookBiRen/build/libs/*.jar)
+artifacts:
+  files:
+    - JookBiRen/build/libs/*.jar
+    - JookBiRen/scripts/**
+    - JookBiRen/appspec.yml
+  discard-paths: yes

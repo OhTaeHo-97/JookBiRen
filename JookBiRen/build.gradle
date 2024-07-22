@@ -30,20 +30,22 @@ configurations {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+    // JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    
     // validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     implementation 'org.apache.commons:commons-lang3'
 
     // spring-security
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
-//    testImplementation 'org.springframework.security:spring-security-test'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
 
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
@@ -57,14 +59,34 @@ dependencies {
     runtimeOnly 'com.h2database:h2'
 
     // mysql
-//	implementation 'org.springframework.boot:spring-boot-starter'
-//	runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    runtimeOnly 'com.mysql:mysql-connector-j'
 
     // querydsl
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
     implementation "com.querydsl:querydsl-core:${queryDslVersion}"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    // Parameter Store
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws-parameter-store-config'
+
+    // gson
+    implementation 'com.google.code.gson:gson'
+
+    // excel 다루기
+    implementation 'org.apache.poi:poi:4.1.2'
+    implementation 'org.apache.poi:poi-ooxml:4.1.2'
+    implementation 'org.apache.poi:poi-scratchpad:4.1.2'
+
+    // commons-io
+    implementation 'commons-io:commons-io:2.6'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-starter-parent:Hoxton.SR12"
+    }
 }
 
 tasks.named('test') {
