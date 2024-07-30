@@ -4,7 +4,9 @@ import com.ablez.jookbiren.log.LogbackConsole;
 import com.ablez.jookbiren.log.LogbackRolling;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
+@Profile("server")
 @Configuration
 public class LogbackConfig {
     @Bean

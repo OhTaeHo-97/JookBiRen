@@ -19,7 +19,7 @@ public class LogbackRolling {
     private final LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
 
     private final String ROLLING_PATTERN = "%d{yyyy-MM-dd HH:mm:ss.SSS} %logger{5} - %msg %n";
-    private final String FILE_NAME = "~/log/application.log";
+    private final String FILE_NAME = "~/logs/application.log";
     private final String LOG_NAME_PATTERN = "./logs/application-%d{yyyy-MM-dd-HH-mm}.%i.log";
     private final String MAX_FILE_SIZE = "10MB";
     private final String TOTAL_SIZE = "30MB";
