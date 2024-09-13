@@ -191,9 +191,9 @@ public class AnswerService {
 
         if (user.getSolvedQuizCount() == 20) {
             score += 5;
-        } else if (user.getSolvedQuizCount() >= 16) {
+        } else if (user.getSolvedQuizCount() >= 17) {
             score += 3;
-        } else if (user.getSolvedQuizCount() >= 13) {
+        } else if (user.getSolvedQuizCount() >= 14) {
             score += 2;
         } else {
             score += 1;
