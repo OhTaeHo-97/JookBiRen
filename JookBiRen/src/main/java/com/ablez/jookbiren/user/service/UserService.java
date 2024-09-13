@@ -149,7 +149,10 @@ public class UserService {
     }
 
     private TokenDto reissueToken(String username) {
-        return new TokenDto(jwtTokenizer.generateAccessToken(username), saveRefreshToken(username).getRefreshToken());
+        String accessToken = jwtTokenizer.generateAccessToken(username);
+        UserEp01 user = findByUserId(Long.parseLong(username));
+        user.setAccessToken(accessToken);
+        return new TokenDto(accessToken, saveRefreshToken(username).getRefreshToken());
     }
 
     public UserEp01 findCurrentUser(String accessToken) {
