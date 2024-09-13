@@ -189,7 +189,7 @@ public class AnswerService {
             score += 1;
         }
 
-        if (user.getSolvedQuizCount() == 19) {
+        if (user.getSolvedQuizCount() == 20) {
             score += 5;
         } else if (user.getSolvedQuizCount() >= 16) {
             score += 3;
