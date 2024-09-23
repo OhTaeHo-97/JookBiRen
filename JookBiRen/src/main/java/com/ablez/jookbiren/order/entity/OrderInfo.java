@@ -39,7 +39,7 @@ public class OrderInfo {
     @JoinColumn(name = "buyer_id")
     @Setter
     private BuyerInfo buyerInfo;
-    @OneToMany(mappedBy = "buyerInfo", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "orderInfo", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UserInfoEp01> userInfos = new ArrayList<>();
 
     public OrderInfo(String orderNumber, Platform platform, Integer amount, LocalDateTime createdAt) {
