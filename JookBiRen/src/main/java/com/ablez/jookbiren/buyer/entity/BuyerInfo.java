@@ -36,8 +36,6 @@ public class BuyerInfo {
 
     @OneToMany(mappedBy = "buyerInfo", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderInfo> orderInfos = new ArrayList<>();
-    @OneToMany(mappedBy = "buyerInfo", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<UserInfoEp01> userInfos = new ArrayList<>();
 
     public BuyerInfo(String phone, String name, String naverNickname, String tumblbugNickname, String address) {
         this.phone = phone;
@@ -62,8 +60,8 @@ public class BuyerInfo {
         orderInfo.setBuyerInfo(this);
     }
 
-    public void addUserInfo(UserInfoEp01 userInfo) {
-        this.userInfos.add(userInfo);
-        userInfo.setBuyerInfo(this);
-    }
+//    public void addUserInfo(UserInfoEp01 userInfo) {
+//        this.userInfos.add(userInfo);
+//        userInfo.setBuyerInfo(this);
+//    }
 }

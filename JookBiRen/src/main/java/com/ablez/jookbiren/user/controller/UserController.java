@@ -75,4 +75,9 @@ public class UserController {
         userService.generateBuyerAndOrderInfo(file);
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    @GetMapping
+    public ResponseEntity getAllUsers() {
+        return new ResponseEntity(userService.findAllUsers(), HttpStatus.OK);
+    }
 }

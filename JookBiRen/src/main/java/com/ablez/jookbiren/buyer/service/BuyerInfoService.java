@@ -35,20 +35,20 @@ public class BuyerInfoService {
             UserEp01 user = new UserEp01(userInfo.getCode());
             userInfo.setUser(user);
             user.setUserInfo(userInfo);
-            buyerInfo.addUserInfo(userInfo);
+            orderInfo.addUserInfo(userInfo);
         }
 
         return buyerInfoJpaRepository.save(buyerInfo);
     }
 
     public void insertBuyerInfoToExistedBuyer(int codeCount, PostOrderInfoDto orderInfoDto, BuyerInfo buyerInfo) {
-        orderInfoService.insertOrderInfo(orderInfoDto, buyerInfo);
+        OrderInfo orderInfo = orderInfoService.insertOrderInfo(orderInfoDto, buyerInfo);
         for (int count = 0; count < codeCount; count++) {
             UserInfoEp01 userInfo = userInfoService.makeUserInfo();
             UserEp01 user = new UserEp01(userInfo.getCode());
             userInfo.setUser(user);
             user.setUserInfo(userInfo);
-            buyerInfo.addUserInfo(userInfo);
+            orderInfo.addUserInfo(userInfo);
         }
     }
 

@@ -1,6 +1,8 @@
 package com.ablez.jookbiren.user.entity;
 
 import com.ablez.jookbiren.buyer.entity.BuyerInfo;
+import com.ablez.jookbiren.order.entity.OrderInfo;
+import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,9 +29,9 @@ public class UserInfoEp01 {
     @Setter
     private UserEp01 user;
     @ManyToOne
-    @JoinColumn(name = "buyer_id")
+    @JoinColumn(name = "order_id")
     @Setter
-    private BuyerInfo buyerInfo;
+    private OrderInfo orderInfo;
 
     public UserInfoEp01(String code) {
         this.code = code;

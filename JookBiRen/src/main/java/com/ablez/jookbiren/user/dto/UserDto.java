@@ -1,7 +1,12 @@
 package com.ablez.jookbiren.user.dto;
 
 import com.ablez.jookbiren.security.jwt.JwtDto.TokenDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
+import java.util.List;
 import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 public class UserDto {
@@ -55,5 +60,23 @@ public class UserDto {
             this.solvedCount = solvedCount;
             this.criminal = criminal;
         }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class UserInfoListDto {
+        private List<UserInfoDto> userInfos;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class UserInfoDto {
+        private String phone;
+        private String name;
+        private String platform;
+        private String orderNumber;
+        private String nickname;
+        private String code;
     }
 }

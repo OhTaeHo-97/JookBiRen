@@ -27,6 +27,7 @@ import com.ablez.jookbiren.user.dto.UserDto.EndingDto;
 import com.ablez.jookbiren.user.dto.UserDto.InfoDto;
 import com.ablez.jookbiren.user.dto.UserDto.LoginDto;
 import com.ablez.jookbiren.user.dto.UserDto.StatusDto;
+import com.ablez.jookbiren.user.dto.UserDto.UserInfoListDto;
 import com.ablez.jookbiren.user.entity.UserEp01;
 import com.ablez.jookbiren.user.entity.UserInfoEp01;
 import com.ablez.jookbiren.user.repository.UserJpaRepository;
@@ -361,7 +362,7 @@ public class UserService {
         }
     }
 
-    public UserEp01 makeUser(String code) {
-        return new UserEp01(code);
+    public UserInfoListDto findAllUsers() {
+        return new UserInfoListDto(userInfoService.findUserInfos());
     }
 }
