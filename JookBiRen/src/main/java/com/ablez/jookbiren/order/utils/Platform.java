@@ -7,7 +7,8 @@ import lombok.Getter;
 
 public enum Platform {
     NAVER("네이버"),
-    TUMBLBUG("텀블벅");
+    TUMBLBUG("텀블벅"),
+    OTHER("기타");
 
     @Getter
     private String platform;
