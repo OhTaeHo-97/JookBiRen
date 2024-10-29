@@ -157,7 +157,7 @@ public class QuizService {
 //                    quizRepository.findQuiz(2, quizInfo.getQuizNumber()).orElseThrow()));
             user.addQuiz2(newQuiz);
             return new QuizPageDto();
-        } else if (quiz.getFirstAccessTime() == null) {
+        } else if (quiz.getFirstAnswerTime() == null) {
             return new QuizPageDto();
         } else {
             FindAnswerResponseDto answer = answerService.findAnswer(
