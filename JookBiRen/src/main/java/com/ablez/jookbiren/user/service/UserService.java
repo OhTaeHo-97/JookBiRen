@@ -169,7 +169,6 @@ public class UserService {
 
     public StatusDto canPickSuspect() {
         UserEp01 user = findByUserId(Long.parseLong(jwtParseInterceptor.getAuthenticatedUsername()));
-        ;
 
         int answerStatus = user.getAnswerStatusCode();
         return new StatusDto(answerStatus == (Math.pow(2, STAR_QUIZ_COUNT) - 1));
